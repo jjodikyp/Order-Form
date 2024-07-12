@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./member.css";
 import { LazyMotion, m, domAnimation } from "framer-motion";
 import ParfumWeb from "../../assets/images/ParfumWeb.svg";
+import { Link } from "react-router-dom";
 
 function FirstPage() {
   const [items, setItems] = useState({
@@ -204,6 +205,19 @@ function FirstPage() {
 
           {!showPopup && (
             <LazyMotion features={domAnimation}>
+              <Link to="/">
+                <m.button
+                  className="kembali"
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ stiffness: 400, damping: 17 }}
+                  type="button"
+                  style={{
+                    marginTop: "10px",
+                  }}
+                >
+                  Kembali
+                </m.button>
+              </Link>
               <m.button
                 className="daftar"
                 whileTap={{ scale: 0.9 }}

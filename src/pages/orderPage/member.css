@@ -300,20 +300,38 @@
     justify-content: center;
 }
 
+.kembali {
+    font-size: 15px;
+    color: black;
+    margin-top: 60px;
+    width: 400px;
+    height: 40px;
+    position: relative;
+    margin: auto;
+    background-color: #FCFAFC;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-family: 'montserrat', sans-serif;
+    align-items: center;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
+
 @media screen and (max-width: 320px) {
-    .daftar {
+    .daftar,.kembali {
         width: 280px;
     }
 }
 
 @media screen and (min-width: 321px) and (max-width: 420px) {
-    .daftar {
+    .daftar,.kembali {
         width: 300px;
     }
 }
 
 @media screen and (min-width: 421px) and (max-width: 430px) {
-    .daftar {
+    .daftar,.kembali {
         width: 380px;
     }
 }
