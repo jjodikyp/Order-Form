@@ -58,8 +58,8 @@ function App() {
     return () => {
       const inputElement = document.querySelectorAll(".input input");
       inputElement.forEach((input) => {
-        input.removeEventListener("focus", () => {});
-        input.removeEventListener("blur", () => {});
+        input.removeEventListener("focus", () => { });
+        input.removeEventListener("blur", () => { });
       });
     };
   }, []);
@@ -97,7 +97,10 @@ function App() {
           <div className="form" style={{ marginTop: "0px" }}>
             <div className="inputs" style={{ marginTop: "30px" }}>
               <div className="input">
-                <input type="text" placeholder="Masukan nama anda!" />
+                <input
+                  type="text"
+                  placeholder="Masukan nama anda!"
+                />
               </div>
 
               <div className="input">
