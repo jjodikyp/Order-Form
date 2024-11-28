@@ -8,8 +8,14 @@ import { Link } from "react-router-dom";
 
 function App() {
   const [name, setName] = useState("");
-  const [nim, setNim] = useState("");
+  const [alamat, setAlamat] = useState("");
   const [date, setDate] = useState("");
+  const [note, setNote] = useState("");
+  const [errors, setErrors] = useState({
+    name: false,
+    alamat: false,
+    date: false,
+  });
 
   useEffect(() => {
     // Mendefinisikan elemen lord-icon
@@ -38,31 +44,53 @@ function App() {
     return () => {
       const inputElement = document.querySelectorAll(".input input");
       inputElement.forEach((input) => {
-        input.removeEventListener("focus", () => { });
-        input.removeEventListener("blur", () => { });
+        input.removeEventListener("focus", () => {});
+        input.removeEventListener("blur", () => {});
       });
     };
   }, []);
 
-  const ChatToWhatsapp = () => {
-    const phoneNumber = '6287795452475'; // Ganti dengan nomor WhatsApp tujuan
-    const message = `Saya Futsal BINUSIAN kak!
-  
-  Voucher untuk Futsal BINUSIAN
-  
-  Nama  : ${name}
-  NIM Mahasiswa : ${nim}
-  Tanggal Claim Voucher : ${date}
-  
-  Yuk claim voucher DISKON 30% kamu, sekarang juga!!!`;
+  const validateForm = () => {
+    const newErrors = {
+      name: name.trim() === "",
+      alamat: alamat.trim() === "",
+      date: date === "",
+    };
 
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    setErrors(newErrors);
 
-    window.open(whatsappUrl, "_blank");
+    // Return true if all fields are valid (no errors)
+    return !(newErrors.name || newErrors.alamat || newErrors.date);
   };
 
+  const ChatToWhatsapp = () => {
+    // First validate the form
+    if (!validateForm()) {
+      return; // Stop if validation fails
+    }
 
+    const phoneNumber = "6287795452475";
+    const message = `Halo kak, saya ingin claim voucher!
+  
+    Nama: ${name}
+    Alamat Penjemputan: ${alamat}
+    Tolong ambil pada tanggal: ${date}
+    Pesan dari saya: ${note}
+  
+    _Voucher ini diclaim melalui booth Katsikat di Mall Malang Town Square_`;
+
+    // Encode pesan agar sesuai dengan format URL
+    const encodedMessage = encodeURIComponent(message);
+
+    // Buat URL WhatsApp
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+    // Debug URL yang dihasilkan untuk memastikan benar
+    console.log("Generated WhatsApp URL:", whatsappUrl);
+
+    // Buka WhatsApp URL
+    window.open(whatsappUrl, "_blank");
+  };
 
   return (
     <div className="w-full flex justify-center items-center">
@@ -80,15 +108,15 @@ function App() {
                 color: "black",
               }}
             >
-              Claim Voucher 30%{" "}
+              Claim Voucher{" "}
               <span style={{ color: "#03AED2", fontSize: "26px" }}>
-                Sekarang
+                50k untuk 2 Pasang
               </span>
             </div>
           </div>
 
           <div
-            className="text text-center"
+            className="text text-center mt-2"
             style={{
               fontWeight: "bold",
               fontFamily: "Montserrat, sans-serif",
@@ -97,7 +125,7 @@ function App() {
               paddingLeft: "20px",
             }}
           >
-            Masa Berlaku: 1-5 September 2024
+            Berlaku hingga 1 Desember 2024
           </div>
 
           <div className="form" style={{ marginTop: "0px" }}>
@@ -107,60 +135,105 @@ function App() {
                   type="text"
                   placeholder="Masukan nama anda!"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setErrors((prev) => ({ ...prev, name: false }));
+                  }}
+                  style={{
+                    borderColor: errors.name ? "red" : "",
+                    borderWidth: errors.name ? "2px" : "",
+                  }}
                 />
+                {errors.name && (
+                  <div
+                    style={{ color: "red", fontSize: "12px", marginTop: "5px" }}
+                  >
+                    Nama harus diisi
+                  </div>
+                )}
               </div>
 
               <div className="input">
-                <input type="text"
-                  placeholder="Masukan NIM anda!"
-                  value={nim}
-                  onChange={(e) => setNim(e.target.value)}
+                <input
+                  type="text"
+                  placeholder="Masukan alamat penjempuatan!"
+                  value={alamat}
+                  onChange={(e) => {
+                    setAlamat(e.target.value);
+                    setErrors((prev) => ({ ...prev, alamat: false }));
+                  }}
+                  style={{
+                    borderColor: errors.alamat ? "red" : "",
+                    borderWidth: errors.alamat ? "2px" : "",
+                  }}
+                />
+                {errors.alamat && (
+                  <div
+                    style={{ color: "red", fontSize: "12px", marginTop: "5px" }}
+                  >
+                    Alamat harus diisi
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <textarea
+                  className="inputPesan"
+                  placeholder="Sampaikan pesan khusus!"
+                  rows={3}
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
                 />
               </div>
 
+              <div
+                className="text"
+                style={{
+                  textAlign: "left",
+                  fontWeight: "bold",
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "15px",
+                  marginTop: "25px",
+                  color: "black",
+                  paddingLeft: "20px",
+                }}
+              >
+                Tanggal Claim Voucher
+              </div>
+
+              <div>
+                <DatePicker
+                  className="input"
+                  onChange={(date, dateString) => {
+                    setDate(dateString);
+                    setErrors((prev) => ({ ...prev, date: false }));
+                  }}
+                  status={errors.date ? "error" : ""}
+                />
+                {errors.date && (
+                  <div
+                    style={{ color: "red", fontSize: "12px", marginTop: "5px" }}
+                  >
+                    Tanggal harus dipilih
+                  </div>
+                )}
+              </div>
             </div>
 
-
             <div
-              className="text"
-              style={{
-                textAlign: "left",
-                fontWeight: "bold",
-                fontFamily: "Montserrat, sans-serif",
-                fontSize: "15px",
-                marginTop: "25px",
-                color: "black",
-                paddingLeft: "20px",
-              }}
-            >
-              Tanggal Claim Voucher
-            </div>
-
-            <DatePicker
-              onChange={(date, dateString) => setDate(dateString)}
-              style={{
-                maxWidth: "100%", // Tambahkan "px" untuk menentukan unit lebar
-                height: "40px", // Tambahkan "px" untuk menentukan unit tinggi
-                paddingLeft: "15px", // Padding kiri
-                borderRadius: "20px", // Tambahkan borderRadius
-                marginTop: "10px", // Margin atas
-                marginLeft: "20px", // Margin kiri
-              }}
-            />
-
-            <div
-              className="text mt-2"
+              className="text mt-6"
               style={{
                 textAlign: "left",
                 fontFamily: "Montserrat, sans-serif",
                 fontSize: "14px",
                 color: "#545454",
-                maxWidth: "350px",
+                maxWidth: "450px",
                 paddingLeft: "20px",
               }}
             >
-              Pastikan tanggal yang kamu pilih diantara tanggal masa berlaku voucher 1-5 September 2024
+              Voucher hanya berlaku hingga tanggal 1 Desember 2024. Apabila
+              tanggal penjemputan melewati batas berlaku voucher, maka akan
+              dikenakan harga normal!
             </div>
 
             <LazyMotion features={domAnimation}>
@@ -173,7 +246,7 @@ function App() {
                   ChatToWhatsapp();
                 }}
               >
-                Chat Admin
+                Ambil Voucher Sekarang
               </m.button>
             </LazyMotion>
           </div>
