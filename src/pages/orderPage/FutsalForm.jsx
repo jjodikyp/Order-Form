@@ -116,13 +116,13 @@ function App() {
           </div>
 
           <div
-            className="text text-center mt-2"
+            className="text-center item-center w-full flex justify-center mt-2"
             style={{
               fontWeight: "bold",
+              textAlign: "center",
               fontFamily: "Montserrat, sans-serif",
               fontSize: "15px",
               color: "black",
-              paddingLeft: "20px",
             }}
           >
             Berlaku hingga 1 Desember 2024
