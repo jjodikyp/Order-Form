@@ -1,0 +1,704 @@
+.bg img{
+    background-image: url('../../assets/images/bgPutih.png');
+    background-position: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Ubah lebar latar belakang */
+    height: 100%; /* Ubah tinggi latar belakang */
+    object-fit: cover;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    margin-top: 200px;
+    padding-bottom: 30px;
+    z-index: 1;
+}
+
+.formUpload{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    padding-bottom: 30px;
+    z-index: 1;
+}
+
+.header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.text{
+    font-size: 26px;
+    font-family: 'Montserrat', sans-serif;
+    color: black;
+    text-align: center;
+    justify-items: center;
+
+    @media screen and (max-width: 600px){
+        font-size: 25px;
+    }
+
+    @media screen and (max-width: 420px){
+        padding-left: 20px;
+    }
+}
+
+.textBayar{
+    font-size: 15px;
+    font-family: 'Montserrat', sans-serif;
+    color: black;
+    text-align: center;
+    font-weight: bold;
+
+    @media screen and (max-width: 600px){
+        font-size: 12px;
+    }
+}
+
+.textDrop{
+    font-size: 15px;
+    font-family: 'Montserrat', sans-serif;
+    color: black;
+    display: grid;
+    place-items: center;
+    height: 25vh;
+    text-align: center;
+    margin: 0 20px;
+}
+
+.textDropBCA{
+    font-size: 25px;
+    font-family: 'Montserrat', sans-serif;
+    color: black;
+    display: grid;
+    place-items: center;
+    height: 25vh;
+    text-align: center;
+    margin: 0 20px;
+
+    @media screen and (max-width: 600px){
+        font-size: 10px;
+    }
+}
+
+.inputs{
+    margin-top: 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+    justify-content: center;
+    align-items: center;
+}
+
+.inputEdit{
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+    justify-content: center;
+    align-items: center;
+}
+
+.inputsS{
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+    justify-content: center;
+    align-items: center;
+}
+
+.inputCek{
+    margin-top: 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+    justify-content: center;
+    align-items: center;
+}
+
+.input{
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 450px;
+    height: 50px;
+    border-radius: 25px;
+    background-color: #F3F4F6;
+    padding-right: 25px;
+
+    @media screen and (max-width: 420px){
+        width: 320px;
+    }
+
+    @media screen and (min-width: 421px) and (max-width: 430px){
+        width: 380px;
+    }
+}
+
+.inputPesan {
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 450px;
+    height: auto;
+    min-height: 120px;
+    border-radius: 25px;
+    background-color: #F3F4F6;
+    padding-right: 25px;
+    border: none;
+    resize: none;
+    padding: 25px;
+    color: black;
+    font-size: 15px;
+    line-height: 1.5;
+    font-family: 'Montserrat', sans-serif;
+    color: black;
+    clip-path: inset(0px round 25px);
+
+    @media screen and (max-width: 420px){
+        width: 320px;
+    }
+
+    @media screen and (min-width: 421px) and (max-width: 430px){
+        width: 380px;
+    }
+}
+
+.ant-picker {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 15px !important;
+    padding: 25px !important;
+  }
+  
+  .ant-picker-placeholder {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 15px !important;
+  }
+
+.katalog {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 450px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding-right: 25px;
+    padding: 10px;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 320px) {
+    .katalog {
+        width: 280px;
+    }
+}
+
+@media screen and (min-width: 321px) and (max-width: 420px) {
+    .katalog {
+        width: 350px;
+    }
+}
+
+@media screen and (min-width: 421px) and (max-width: 430px) {
+    .katalog {
+        width: 380px;
+    }
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 450px;
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding-right: 25px;
+    padding: 15px;
+}
+
+@media screen and (max-width: 320px) {
+    .popup {
+        width: 280px;
+    }
+}
+
+@media screen and (min-width: 321px) and (max-width: 420px) {
+    .popup {
+        width: 250px;
+    }
+}
+
+@media screen and (min-width: 421px) and (max-width: 430px) {
+    .popup {
+        width: 380px;
+    }
+}
+  
+  .blur-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    z-index: 500;
+  }
+
+.inputS{
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 400px;
+    height: 50px;
+    border-radius: 20px;
+    background-color: #F3F4F6;
+    color: black;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    appearance: none; /* Untuk browser yang mendukung */
+    -webkit-appearance: none; /* Untuk browser WebKit (misalnya Chrome, Safari) */
+    background-image: none;
+}
+
+.input img{
+    margin: 0 30px;
+    height: 20px;
+}
+
+.input input{
+    height: 50px;
+    width: 400px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: black;
+    font-size: 15px;
+    font-family: 'Montserrat', sans-serif;
+    margin-left: 30px;
+}
+
+.buat{
+    margin-top: 60px;
+    width: 400px;
+    height: 50px;
+    position: relative;
+    margin: auto;
+    border-radius: 20px;
+    background-color: #1F5991;
+}
+
+.buatS{
+    margin-top: 60px;
+    width: 400px;
+    height: 40px;
+    position: relative;
+    margin: auto;
+    border-radius: 20px;
+    background-color: #29B200;
+    font-family: 'montserrat', sans-serif;
+
+    @media screen and (max-width: 420px){
+        width: 300px;
+    }
+}
+
+.previewImage{
+    @media screen and (max-width: 420px){
+        width: 400px;
+    }
+}
+
+.daftar {
+    font-size: 15px;
+    color: white;
+    margin-top: 60px;
+    width: 400px;
+    height: 40px;
+    position: relative;
+    margin: auto;
+    border-radius: 20px;
+    background-color: #3787F7;
+    font-family: 'montserrat', sans-serif;
+    align-items: center;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
+
+.kembali {
+    font-size: 15px;
+    color: black;
+    margin-top: 60px;
+    width: 400px;
+    height: 40px;
+    position: relative;
+    margin: auto;
+    background-color: #FCFAFC;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-family: 'montserrat', sans-serif;
+    align-items: center;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
+
+@media screen and (max-width: 320px) {
+    .daftar,.kembali {
+        width: 280px;
+    }
+}
+
+@media screen and (min-width: 321px) and (max-width: 420px) {
+    .daftar,.kembali {
+        width: 300px;
+    }
+}
+
+@media screen and (min-width: 421px) and (max-width: 430px) {
+    .daftar,.kembali {
+        width: 380px;
+    }
+}
+
+.logoAtas img {
+    height: 50px;
+    width: 290px;
+}
+
+.logoAnimation {
+    animation: slideInFromLeft 1s ease;
+    margin: auto;
+}
+
+@keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-100%); /* Mulai dari luar layar sebelah kiri */
+    }
+    100% {
+        transform: translateX(0); /* Akhir di posisi awal */
+    }
+}
+
+.LuInstagram {
+    width: 100px; /* Ubah ukuran lebar sesuai kebutuhan */
+    height: 100px; /* Ubah ukuran tinggi sesuai kebutuhan */
+}
+
+.logoAtas{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 0px;
+    margin-top: 0px;
+    z-index: 1;
+}
+
+.buat{
+    font-family: 'montserrat', sans-serif;
+
+    @media screen and (max-width: 420px){
+        width: 300px;
+        
+    }
+}
+
+.input1:hover,
+.input2:hover,
+.input3:hover {
+    background-color: #cfd0d3; /* Ubah warna latar belakang saat tombol dihover */
+}
+
+.input1 img{
+    margin: 0 25px 0 5px;
+    height: 20px;
+}
+.input2 img{
+    margin: 0 25px 0 5px;
+    height: 20px;
+}
+.input3 img{
+    margin: 0 40px 0 19px;
+    height: 20px;
+}
+
+.inputts{
+    margin-top: 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+}
+
+.input1,
+.input2,
+.input3 {
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 400px;
+    height: 50px;
+    border-radius: 20px;
+    background-color: #F3F4F6;
+    cursor: pointer;
+    
+    @media screen and (max-width: 600px){
+        width: 300px;
+    }
+}
+
+.inputStatus{
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 400px;
+    height: 50px;
+    border-radius: 20px;
+    outline: 1px solid black;
+    cursor: pointer;
+    justify-content: center;
+}
+
+/* Background tampilan dropdown*/
+.drop{
+    width: 400px;
+    height: 200px;
+    background-color: #F3F4F6;
+    border-radius: 20px;
+
+    @media screen and (max-width: 600px){
+        width: 300px;
+    }
+}
+
+.dropQris{
+    width: 400px;
+    height: 200px;
+    border-radius: 20px;
+}
+
+.dropCash{
+    width: 400px;
+    height: 110px;
+    border-radius: 20px;
+    background-color: #F3F4F6;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+    @media screen and (max-width: 600px){
+        width: 300px;
+    }
+}
+
+.download-button{
+    right: 0;
+    bottom: 0;
+    cursor: pointer;
+}
+
+.dropQrisContainer {
+    width: 400px;
+    height: 200px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    outline: 2px solid #dedede;
+
+    @media screen and (max-width: 600px){
+        width: 300px;
+    }
+  }
+  
+  .dropQris {
+    width: 150px;
+    height: 150px;
+    position: relative;
+  }
+  
+  .download-button {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+  }
+  
+.dropdown-content {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.status{
+    width: 200px;
+    height: 200px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.status img{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    max-width: 100%; /* Pastikan gambar tidak melebihi lebar div */
+    max-height: 100%;
+    margin: auto;
+}
+
+.buatStatus{
+    width: 400px;
+    height: 50px;
+    position: relative;
+    margin: auto;
+    border-radius: 20px;
+    background-color: #32c54b;
+    font-family: 'montserrat', sans-serif;
+
+    @media screen and (max-width: 600px){
+        width: 300px;
+    }
+}
+
+.add{
+    font-size: 15px;
+    color: white;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    background-color: #28865b;
+    text-align: center;
+    border-radius: 20px;
+    padding: 8px 10px;
+    font-family: 'montserrat', sans-serif;
+}
+
+.cek{
+    font-size: 13px;
+    color: black;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    background-color: #F3F4F6;
+    text-align: center;
+    border-radius: 15px;
+    outline: 1px solid rgb(181, 181, 181);
+    font-family: 'montserrat', sans-serif;
+
+    @media screen and (max-width: 600px){
+        margin-left: 0px;
+    }
+}
+
+.slider{
+    width: 400px;
+    margin: auto;
+    margin-top: 30px;
+    z-index: 10;
+    overflow: hidden;
+
+    @media screen and (max-width: 600px){
+        width: 300px;
+    }
+}
+
+.slider img {
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -ms-border-radius: 30px;
+    -o-border-radius: 30px;
+    transition: "transform 0.5s ease-in-out";
+    -webkit-transition: "transform 0.5s ease-in-out";
+    -moz-transition: "transform 0.5s ease-in-out";
+    -ms-transition: "transform 0.5s ease-in-out";
+    -o-transition: "transform 0.5s ease-in-out";
+
+    @media screen and (max-width: 600px){
+        width: 200px;
+    }
+}
+
+.tombolSalin{
+    margin-bottom: 0;
+    color: white;
+    width: 230px;
+    height: 40px;
+    font-size: 15px;
+    text-align: center;
+    border-radius: 20px;
+    background-color: #1F5991;
+    align-items: center;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+
+    @media screen and (max-width: 600px){
+        margin-top: -50;
+    }
+}
+
+.batas{
+    width: 250px;
+    height: 60px;
+
+    @media screen and (max-width: 600px){
+        height: 90px;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+.display{
+    width: 400px;
+    height: 100px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-color: #F3F4F6;
+
+    @media screen and (max-width: 600px){
+        width: 300px;
+    }
+}
+
+.search{
+    width: 350px;
+    height: 40px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-color: #F3F4F6;
+    margin-top: 20px;
+}
+
+.searchIsi{
+    margin-left: 10px;
+}
+
+.custom-date-picker {
+    width: 320px; 
+}
