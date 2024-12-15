@@ -45,14 +45,14 @@ function FirstPage() {
     const message = `Halo Admin Katsikat!
 Ini Form Order saya yaa!
 
-Nama: ${formData.name}
-Alamat: ${formData.address} 
-Link Lokasi: ${formData.locationLink || "-"}
-Item Yang Dipilih: ${formData.selectedItems?.join(", ") || "-"}
-Treatment Yang Dipilih: ${formData.selectedTreatments?.join(", ") || "-"}
-Aroma Yang Dipilih: ${formData.selectedAromas?.join(", ") || "-"}
+*Nama:* ${formData.name}
+*Alamat:* ${formData.address} 
+*Link Lokasi:* ${formData.locationLink || "-"}
+*Item Yang Dipilih:* ${formData.selectedItems?.join(", ") || "-"}
+*Treatment Yang Dipilih:* ${formData.selectedTreatments?.join(", ") || "-"}
+*Aroma Yang Dipilih:* ${formData.selectedAromas?.join(", ") || "-"}
 
-Pick-up: ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
+*Pick-up:* ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
 
 *Pesan Khusus*: ${formData.specialMessage}
 *Parfum yang dibeli*: ${selectedParfumes}`;
