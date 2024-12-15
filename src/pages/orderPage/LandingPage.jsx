@@ -129,9 +129,34 @@ function App() {
   const handleGetLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           const { latitude, longitude } = position.coords;
           const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+          
+          // Koordinat lokasi Katsikat yang baru (2JMV+3V Bunulrejo)
+          const katsikatLat = -7.952222;  
+          const katsikatLng = 112.643333;
+          
+          // Hitung jarak menggunakan Haversine formula yang diperbarui
+          const R = 6371; // Radius bumi dalam kilometer
+          const lat1 = katsikatLat * Math.PI / 180;
+          const lon1 = katsikatLng * Math.PI / 180;
+          const lat2 = latitude * Math.PI / 180;
+          const lon2 = longitude * Math.PI / 180;
+
+          const dLat = lat2 - lat1;
+          const dLon = lon2 - lon1;
+          
+          const a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1) * Math.cos(lat2) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+          let distance = R * c; // Jarak dalam kilometer
+          
+          // Faktor koreksi untuk menyesuaikan dengan jarak sebenarnya
+          distance = distance * 1.2; // Menambahkan faktor koreksi 20%
+
           setFormData(prev => {
             const newFormData = {
               ...prev,
@@ -140,7 +165,12 @@ function App() {
             saveFormDataToLocalStorage(newFormData);
             return newFormData;
           });
-          alert('Lokasi berhasil dibagikan!');
+
+          if (distance > 7) {
+            alert(`Jarak anda ${distance.toFixed(1)} km dari Katsikat. Ini melebihi batas jarak Gratis Ongkir 7 km!`);
+          } else {
+            alert(`Lokasi berhasil dibagikan! Jarak anda ${distance.toFixed(1)} km dari Katsikat.`);
+          }
         }, 
         (error) => {
           console.error("Error getting location:", error);

@@ -55,7 +55,14 @@ Ini Form Order saya yaa!
 *Pick-up:* ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
 
 *Pesan Khusus*: ${formData.specialMessage}
-*Parfum yang dibeli*: ${selectedParfumes}`;
+*Parfum yang dibeli*: ${selectedParfumes}
+*Biaya Ongkir:* ${(() => {
+  const distance = parseFloat(localStorage.getItem('distance'));
+  if (!distance || distance <= 7) return 'Gratis';
+  const extraKm = Math.ceil(distance - 7);
+  const ongkir = extraKm * 2000;
+  return `Rp${ongkir.toLocaleString('id-ID')}`;
+})()}`;
 
     // Encode message for URL
     const encodedMessage = encodeURIComponent(message);
