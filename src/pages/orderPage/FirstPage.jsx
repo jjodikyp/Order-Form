@@ -13,7 +13,6 @@ function FirstPage() {
     BlackCoffee: false,
     Lavender: false,
     Coklat: false,
-    Mint: false,
   });
   const [showPopup, setShowPopup] = useState(false);
 
@@ -30,6 +29,39 @@ function FirstPage() {
 
   const handleSelesaiClick = () => {
     setShowPopup(false);
+  };
+
+  const handleKirimPesanan = () => {
+    // Get form data from localStorage
+    const formData = JSON.parse(localStorage.getItem('form'));
+    
+    // Get selected parfume items
+    const selectedParfumes = Object.entries(items)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([name]) => name)
+      .join(", ");
+
+    // Create WhatsApp message
+    const message = `Halo Admin Katsikat!
+Ini Form Order saya yaa!
+
+Nama: ${formData.name}
+Alamat: ${formData.address} 
+Link Lokasi: ${formData.locationLink || "-"}
+Item Yang Dipilih: ${formData.selectedItems?.join(", ") || "-"}
+Treatment Yang Dipilih: ${formData.selectedTreatments?.join(", ") || "-"}
+Aroma Yang Dipilih: ${formData.selectedAromas?.join(", ") || "-"}
+
+Pick-up: ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
+
+*Pesan Khusus*: ${formData.specialMessage}
+*Parfum yang dibeli*: ${selectedParfumes}`;
+
+    // Encode message for URL
+    const encodedMessage = encodeURIComponent(message);
+    
+    // Open WhatsApp with pre-filled message
+    window.open(`https://wa.me/6287795452475?text=${encodedMessage}`);
   };
 
   return (
@@ -223,6 +255,7 @@ function FirstPage() {
                 whileTap={{ scale: 0.9 }}
                 transition={{ stiffness: 400, damping: 17 }}
                 type="button"
+                onClick={handleKirimPesanan}
                 style={{
                   marginTop: "10px",
                 }}
