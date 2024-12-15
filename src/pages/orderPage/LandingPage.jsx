@@ -376,6 +376,13 @@ function App() {
                 value={formData.itemCount}
                 onChange={handleInputChange}
                 min="1"
+                pattern="[0-9]*"
+                inputMode="numeric"
+                onKeyPress={(e) => {
+                  if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
               />
               {errors.itemCount && (
                 <div style={{ color: "red", fontSize: "12px" }}>
