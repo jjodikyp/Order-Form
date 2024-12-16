@@ -18,11 +18,11 @@ function FirstPage() {
 
   const variants = [
     "Apple",
-    "Vanilla", 
+    {name: "Vanilla", isBestSeller: true}, 
     "BubbleGum",
     "Grape", 
-    "BlackCoffee",
-    "Lavender",
+    {name: "BlackCoffee", isBestSeller: true},
+    {name: "Lavender", isBestSeller: true},
     "Coklat"
   ];
 
@@ -180,32 +180,66 @@ ${cartDetails}
                       fontFamily: "Montserrat, sans-serif",
                     }}>
                       <h3 style={{marginBottom: "15px", fontSize: "18px", textAlign: "center", fontFamily: "Montserrat, sans-serif"}}>Pilih Varian:</h3>
+                      
                       <div style={{
-                        position: "relative",
-                        width: "100%",
+                        display: "grid",
+                        gridTemplateColumns: "repeat(2, 1fr)",
+                        gap: "10px",
                         marginBottom: "20px"
                       }}>
-                        <input 
-                          list="variants"
-                          value={selectedVariant}
-                          onChange={(e) => setSelectedVariant(e.target.value)}
-                          style={{
-                            width: "100%",
-                            padding: "12px",
-                            fontSize: "16px",
-                            borderRadius: "50px",
-                            border: "1px solid #3787F7",
-                            backgroundColor: "white",
-                            textAlign: "center",
-                            fontFamily: "Montserrat, sans-serif"
-                          }}
-                          placeholder="Pilih varian"
-                        />
-                        <datalist id="variants">
-                          {variants.map(variant => (
-                            <option key={variant} value={variant} />
-                          ))}
-                        </datalist>
+                        {variants.map(variant => {
+                          const variantName = typeof variant === 'string' ? variant : variant.name;
+                          const isBestSeller = typeof variant === 'object' && variant.isBestSeller;
+                          
+                          return (
+                            <div key={variantName} style={{position: 'relative'}}>
+                              <m.button
+                                onClick={() => setSelectedVariant(variantName)}
+                                whileTap={{ scale: 0.95 }}
+                                style={{
+                                  padding: "10px",
+                                  borderRadius: "10px",
+                                  border: "none",
+                                  backgroundColor: selectedVariant === variantName ? "#3787F7" : "#f0f0f0",
+                                  color: selectedVariant === variantName ? "white" : "black",
+                                  cursor: "pointer",
+                                  fontFamily: "Montserrat, sans-serif",
+                                  fontSize: "14px",
+                                  transition: "all 0.2s",
+                                  width: "100%"
+                                }}
+                              >
+                                {variantName}
+                              </m.button>
+                              {isBestSeller && (
+                                <m.div 
+                                  initial={{ scale: 1 }}
+                                  animate={{ 
+                                    scale: [1, 1.1, 1],
+                                  }}
+                                  transition={{
+                                    duration: 1.5,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                    delay: 0.5
+                                  }}
+                                  style={{
+                                    position: 'absolute',
+                                    top: '-8px',
+                                    right: '-8px',
+                                    backgroundColor: '#000000',
+                                    color: 'white',
+                                    padding: '2px 6px',
+                                    borderRadius: '8px',
+                                    fontSize: '10px'
+                                  }}
+                                >
+                                  Best Seller
+                                </m.div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
 
                       <h3 style={{marginBottom: "15px", fontSize: "18px", textAlign: "center", fontFamily: "Montserrat, sans-serif"}}>Jumlah:</h3>
@@ -310,7 +344,7 @@ ${cartDetails}
               margin: "20px 0",
               padding: "15px",
               backgroundColor: "#f5f5f5",
-              borderRadius: "10px"
+              borderRadius: "20px"
             }}>
               <h3 style={{
                 fontFamily: "Montserrat, sans-serif",
@@ -324,15 +358,15 @@ ${cartDetails}
                   justifyContent: "space-between",
                   alignItems: "center",
                   marginBottom: "10px",
-                  padding: "10px",
+                  padding: "15px",
                   backgroundColor: "white",
-                  borderRadius: "5px",
+                  borderRadius: "15px",
                   fontFamily: "Montserrat, sans-serif"
                 }}>
                   <div style={{color: "black"}}>
-                    <span style={{fontWeight: "bold"}}>{item.variant}</span>
+                    <span style={{fontWeight: "bold", fontSize: "15px"}}>{item.variant}</span>
                     <br />
-                    {item.quantity}x @ Rp{item.price}
+                    <span style={{fontSize: "13px"}}>{item.quantity}x @ Rp{item.price}</span>
                   </div>
                   <button 
                     onClick={() => handleRemoveFromCart(index)}
@@ -340,7 +374,7 @@ ${cartDetails}
                       backgroundColor: "#3787F7",
                       color: "white",
                       border: "none",
-                      borderRadius: "5px",
+                      borderRadius: "10px",
                       padding: "5px 10px",
                       cursor: "pointer",
                       fontFamily: "Montserrat, sans-serif"
