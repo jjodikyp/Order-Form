@@ -60,33 +60,7 @@ Ini Form Order saya yaa!
 *Pick-up:* ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
 
 *Pesan Khusus*: ${formData.specialMessage}
-*Parfum yang dibeli*: ${selectedParfumes}
-*Biaya Ongkir:* ${(() => {
-  const distance = parseFloat(localStorage.getItem('distance'));
-  console.log('Distance from localStorage:', distance); // untuk debugging
-  
-  if (!distance) return 'Gratis';
-  
-  // Konversi ke angka dan bandingkan
-  const distanceNum = Number(distance);
-  
-  if (distanceNum < 0) {
-    return 'Invalid distance';
-  }
-  
-  if (distanceNum <= 7.0) {
-    return 'Gratis';
-  }
-  
-  if (distanceNum > 7.0 && distanceNum <= 8.0) {
-    return `Rp2.000 (${distanceNum.toFixed(1)} km)`;
-  }
-  
-  // Setelah 8km, setiap 1km tambahan dikenakan Rp2.000
-  const extraKm = Math.ceil(distanceNum - 8.0);
-  const cost = 2000 + (extraKm * 2000);
-  return `Rp${cost.toLocaleString('id-ID')} (${distanceNum.toFixed(1)} km)`;
-})()}`;
+*Parfum yang dibeli*: ${selectedParfumes}`;
 
     // Encode message for URL
     const encodedMessage = encodeURIComponent(message);
