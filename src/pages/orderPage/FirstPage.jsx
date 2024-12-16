@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./member.css";
 import { LazyMotion, m, domAnimation } from "framer-motion";
 import ParfumWeb from "../../assets/images/ParfumWeb.svg";
@@ -10,43 +10,74 @@ const BASE_PRICE = 2000;
 const PRICE_PER_KM = 2000;
 
 function FirstPage() {
-  const [items, setItems] = useState({
-    Apple: false,
-    Vanilla: false,
-    BubbleGum: false,
-    Grape: false,
-    BlackCoffee: false,
-    Lavender: false,
-    Coklat: false,
-  });
+  const [cart, setCart] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const popupRef = useRef(null);
 
-  const handleCheckboxChange = (itemName) => {
-    setItems((prevItems) => ({
-      ...prevItems,
-      [itemName]: !prevItems[itemName],
-    }));
+  const variants = [
+    "Apple",
+    "Vanilla", 
+    "BubbleGum",
+    "Grape", 
+    "BlackCoffee",
+    "Lavender",
+    "Coklat"
+  ];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setShowPopup(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleAddToCart = () => {
+    if (!selectedVariant) {
+      alert("Silakan pilih varian parfum");
+      return;
+    }
+
+    const newItem = {
+      variant: selectedVariant,
+      quantity: quantity,
+      price: 30000
+    };
+
+    setCart([...cart, newItem]);
+    setShowPopup(false);
+    setSelectedVariant("");
+    setQuantity(1);
+  };
+
+  const handleRemoveFromCart = (index) => {
+    const newCart = cart.filter((_, i) => i !== index);
+    setCart(newCart);
   };
 
   const handlePesanClick = () => {
     setShowPopup(true);
+    setSelectedVariant(""); // Reset selected variant when opening popup
   };
 
-  const handleSelesaiClick = () => {
-    setShowPopup(false);
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
   const handleKirimPesanan = () => {
-    // Get form data from localStorage
     const formData = JSON.parse(localStorage.getItem('form'));
     
-    // Get selected parfume items
-    const selectedParfumes = Object.entries(items)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([name]) => name)
-      .join(", ");
+    let cartDetails = cart.map(item => 
+      `${item.quantity}x ${item.variant} (Rp${item.price * item.quantity})`
+    ).join("\n");
 
-    // Create WhatsApp message
     const message = `Halo Admin Katsikat!
 Ini Form Order saya yaa!
 
@@ -60,69 +91,49 @@ Ini Form Order saya yaa!
 *Pick-up:* ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
 
 *Pesan Khusus*: ${formData.specialMessage}
-*Parfum yang dibeli*: ${selectedParfumes}`;
 
-    // Encode message for URL
+*Detail Pembelian Parfum:*
+${cartDetails}
+*Total:* Rp${calculateTotal()}`;
+
     const encodedMessage = encodeURIComponent(message);
-    
-    // Open WhatsApp with pre-filled message
     window.open(`https://wa.me/6287795452475?text=${encodedMessage}`);
   };
 
   return (
     <div className="w-full flex justify-center items-center">
-      <div
-        className={`container w-full flex justify-center ${
-          showPopup ? "blur-background" : ""
-        }`}
-      >
+      <div className={`container w-full flex justify-center ${showPopup ? "blur-background" : ""}`}>
         <div className="flex flex-col items-center">
           <div style={{ zIndex: 1 }}>
-            <div
-              className=""
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textAlign: "center",
-                fontWeight: "bold",
-                fontFamily: "Montserrat, sans-serif",
-                fontSize: "26px",
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
+            <div className="" style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center", 
+              textAlign: "center",
+              fontWeight: "bold",
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "26px",
+              marginTop: "15px",
+              color: "black",
+            }}>
               Pembelian&nbsp;
-              <span style={{ color: "#03AED2", fontSize: "26px" }}>Produk</span>
+              <span style={{ color: "#3787F7", fontSize: "26px" }}>Produk</span>
             </div>
           </div>
 
-          <div
-            className="katalog"
-            style={{ marginTop: "20px", position: "relative" }}
-          >
+          <div className="katalog" style={{ marginTop: "20px", position: "relative" }}>
             <div className="product-image" style={{ marginRight: "10px" }}>
-              <img
-                src={ParfumWeb}
-                alt="Produk"
-                style={{ width: "80px", height: "80px", borderRadius: "10px" }}
-              />
+              <img src={ParfumWeb} alt="Produk" style={{ width: "80px", height: "80px", borderRadius: "10px" }} />
             </div>
             <div className="product-info" style={{ flexGrow: 1 }}>
-              <div
-                className="product-name"
-                style={{
-                  fontWeight: "bold",
-                  color: "black",
-                  fontFamily: "Montserrat, sans-serif",
-                }}
-              >
+              <div className="product-name" style={{
+                fontWeight: "bold",
+                color: "black",
+                fontFamily: "Montserrat, sans-serif",
+              }}>
                 Shoes Parfume
               </div>
-              <div
-                className="product-description"
-                style={{ color: "black", fontFamily: "Montserrat, sans-serif" }}
-              >
+              <div className="product-description" style={{ color: "black", fontFamily: "Montserrat, sans-serif" }}>
                 Rp30.000 - 60ml
               </div>
             </div>
@@ -134,7 +145,7 @@ Ini Form Order saya yaa!
                   whileTap={{ scale: 0.9 }}
                   transition={{ stiffness: 400, damping: 17 }}
                   style={{
-                    backgroundColor: "#29B200",
+                    backgroundColor: "#3787F7",
                     color: "white",
                     border: "none",
                     borderRadius: "10px",
@@ -144,78 +155,144 @@ Ini Form Order saya yaa!
                     fontSize: "14px",
                   }}
                 >
-                  Pesan
+                  Tambah ke Keranjang
                 </m.button>
               </LazyMotion>
+
               {showPopup && (
                 <>
                   <div className="blur-background"></div>
-                  <div className="popup">
-                    <div
-                      id="popupContent"
-                      style={{
-                        color: "black",
-                        fontFamily: "Montserrat, sans-serif",
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={items.Apple}
-                        onChange={() => handleCheckboxChange("Apple")}
-                        style={{ marginRight: "5px" }}
-                      />{" "}
-                      Apple
-                      <br />
-                      <input
-                        type="checkbox"
-                        checked={items.Vanilla}
-                        onChange={() => handleCheckboxChange("Vanilla")}
-                        style={{ marginRight: "5px" }}
-                      />{" "}
-                      Vanilla
-                      <br />
-                      <input
-                        type="checkbox"
-                        checked={items.BubbleGum}
-                        onChange={() => handleCheckboxChange("BubbleGum")}
-                        style={{ marginRight: "5px" }}
-                      />{" "}
-                      Bubble Gum
-                      <br />
-                      <input
-                        type="checkbox"
-                        checked={items.Grape}
-                        onChange={() => handleCheckboxChange("Grape")}
-                        style={{ marginRight: "5px" }}
-                      />{" "}
-                      Grape
-                      <br />
-                      <input
-                        type="checkbox"
-                        checked={items.BlackCoffee}
-                        onChange={() => handleCheckboxChange("BlackCoffee")}
-                        style={{ marginRight: "5px" }}
-                      />{" "}
-                      Black Coffee
-                      <br />
+                  <div ref={popupRef} className="popup" style={{
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    backgroundColor: "white",
+                    padding: "20px",
+                    borderRadius: "10px",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                    width: "90%",
+                    maxWidth: "400px",
+                    zIndex: 1000
+                  }}>
+                    <div id="popupContent" style={{
+                      color: "black",
+                      fontFamily: "Montserrat, sans-serif",
+                    }}>
+                      <h3 style={{marginBottom: "15px", fontSize: "18px", textAlign: "center", fontFamily: "Montserrat, sans-serif"}}>Pilih Varian:</h3>
+                      <div style={{
+                        position: "relative",
+                        width: "100%",
+                        marginBottom: "20px"
+                      }}>
+                        <input 
+                          list="variants"
+                          value={selectedVariant}
+                          onChange={(e) => setSelectedVariant(e.target.value)}
+                          style={{
+                            width: "100%",
+                            padding: "12px",
+                            fontSize: "16px",
+                            borderRadius: "50px",
+                            border: "1px solid #3787F7",
+                            backgroundColor: "white",
+                            textAlign: "center",
+                            fontFamily: "Montserrat, sans-serif"
+                          }}
+                          placeholder="Pilih varian"
+                        />
+                        <datalist id="variants">
+                          {variants.map(variant => (
+                            <option key={variant} value={variant} />
+                          ))}
+                        </datalist>
+                      </div>
+
+                      <h3 style={{marginBottom: "15px", fontSize: "18px", textAlign: "center", fontFamily: "Montserrat, sans-serif"}}>Jumlah:</h3>
+                      <div style={{display: "flex", alignItems: "center", marginBottom: "20px", justifyContent: "center"}}>
+                        <LazyMotion features={domAnimation}>
+                          <m.button 
+                            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                            whileTap={{ scale: 0.9 }}
+                            transition={{ stiffness: 400, damping: 17 }}
+                            style={{
+                              padding: "10px 15px",
+                              borderRadius: "50%",
+                              width: "40px",
+                              height: "40px",
+                              backgroundColor: "#3787F7",
+                              color: "white",
+                              border: "none",
+                              fontSize: "18px",
+                              fontFamily: "Montserrat, sans-serif",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center"
+                            }}
+                          >-</m.button>
+                        </LazyMotion>
+                        <span style={{margin: "0 20px", fontSize: "18px", fontFamily: "Montserrat, sans-serif"}}>{quantity}</span>
+                        <LazyMotion features={domAnimation}>
+                          <m.button 
+                            onClick={() => setQuantity(quantity + 1)}
+                            whileTap={{ scale: 0.9 }}
+                            transition={{ stiffness: 400, damping: 17 }}
+                            style={{
+                              padding: "10px 15px",
+                              borderRadius: "50%",
+                              width: "40px",
+                              height: "40px",
+                              backgroundColor: "#3787F7",
+                              color: "white",
+                              border: "none",
+                              fontSize: "18px",
+                              fontFamily: "Montserrat, sans-serif",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center"
+                            }}
+                          >+</m.button>
+                        </LazyMotion>
+                      </div>
+
                       <LazyMotion features={domAnimation}>
                         <m.button
-                          onClick={handleSelesaiClick}
+                          onClick={handleAddToCart}
                           whileTap={{ scale: 0.9 }}
                           transition={{ stiffness: 400, damping: 17 }}
                           style={{
-                            backgroundColor: "#03AED2",
+                            backgroundColor: "#3787F7",
                             color: "white",
                             border: "none",
-                            borderRadius: "20px",
-                            padding: "10px",
-                            marginTop: "20px",
+                            borderRadius: "50px",
+                            padding: "12px",
+                            marginTop: "10px",
                             cursor: "pointer",
                             fontFamily: "Montserrat, sans-serif",
                             width: "100%",
+                            fontSize: "16px"
                           }}
                         >
-                          Selesai
+                          Tambah ke Keranjang
+                        </m.button>
+                        <m.button
+                          onClick={() => setShowPopup(false)}
+                          whileTap={{ scale: 0.9 }}
+                          transition={{ stiffness: 400, damping: 17 }}
+                          style={{
+                            backgroundColor: "#545454",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "50px",
+                            padding: "12px",
+                            marginTop: "10px",
+                            cursor: "pointer",
+                            fontFamily: "Montserrat, sans-serif",
+                            width: "100%",
+                            fontSize: "16px"
+                          }}
+                        >
+                          Batalkan
                         </m.button>
                       </LazyMotion>
                     </div>
@@ -225,18 +302,77 @@ Ini Form Order saya yaa!
             </div>
           </div>
 
-          <div
-            className=""
-            style={{
-              textAlign: "center",
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "14px",
-              marginBottom: "15px",
-              color: "#545454",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          {/* Keranjang */}
+          {cart.length > 0 && (
+            <div style={{
+              width: "100%",
+              maxWidth: "500px",
+              margin: "20px 0",
+              padding: "15px",
+              backgroundColor: "#f5f5f5",
+              borderRadius: "10px"
+            }}>
+              <h3 style={{
+                fontFamily: "Montserrat, sans-serif",
+                marginBottom: "10px",
+                color: "black"
+              }}>Keranjang:</h3>
+              
+              {cart.map((item, index) => (
+                <div key={index} style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                  padding: "10px",
+                  backgroundColor: "white",
+                  borderRadius: "5px",
+                  fontFamily: "Montserrat, sans-serif"
+                }}>
+                  <div style={{color: "black"}}>
+                    <span style={{fontWeight: "bold"}}>{item.variant}</span>
+                    <br />
+                    {item.quantity}x @ Rp{item.price}
+                  </div>
+                  <button 
+                    onClick={() => handleRemoveFromCart(index)}
+                    style={{
+                      backgroundColor: "#3787F7",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "5px",
+                      padding: "5px 10px",
+                      cursor: "pointer",
+                      fontFamily: "Montserrat, sans-serif"
+                    }}
+                  >
+                    Hapus
+                  </button>
+                </div>
+              ))}
+              
+              <div style={{
+                borderTop: "2px solid #ddd",
+                paddingTop: "10px",
+                textAlign: "right",
+                fontWeight: "bold",
+                color: "black",
+                fontFamily: "Montserrat, sans-serif"
+              }}>
+                Total: Rp{calculateTotal()}
+              </div>
+            </div>
+          )}
+
+          <div className="" style={{
+            textAlign: "center",
+            fontFamily: "Montserrat, sans-serif",
+            fontSize: "14px",
+            marginBottom: "15px",
+            color: "#545454",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
             Lewati jika tidak ingin membeli produk!
           </div>
 
@@ -250,6 +386,9 @@ Ini Form Order saya yaa!
                   type="button"
                   style={{
                     marginTop: "10px",
+                    backgroundColor: "#545454",
+                    color: "white",
+                    fontFamily: "Montserrat, sans-serif"
                   }}
                 >
                   Kembali
@@ -263,6 +402,9 @@ Ini Form Order saya yaa!
                 onClick={handleKirimPesanan}
                 style={{
                   marginTop: "10px",
+                  backgroundColor: "#3787F7",
+                  color: "white",
+                  fontFamily: "Montserrat, sans-serif"
                 }}
               >
                 Kirim pesanan pada Admin
