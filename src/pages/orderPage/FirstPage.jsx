@@ -224,6 +224,7 @@ Ini Form Order saya yaa!
 *Nama:* ${formData.name}
 *Alamat:* ${fullAddress}
 *Link Lokasi:* ${formData.locationLink || "-"}
+*Jumlah Item:* ${formData.itemCount || "-"}
 *Item Yang Dipilih:* ${formData.selectedItems?.join(", ") || "-"}
 *Treatment Yang Dipilih:* ${formData.selectedTreatments?.join(", ") || "-"}
 *Aroma Yang Dipilih:* ${formData.selectedAromas?.join(", ") || "-"}

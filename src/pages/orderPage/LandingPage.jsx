@@ -118,11 +118,11 @@ function App() {
 
   // Load initial aromas state from localStorage
   const initialAromas = JSON.parse(localStorage.getItem("aromas")) || {
-    Apple: false,
-    Vanilla: false,
-    BubbleGum: false,
+    "Apple": false,
+    "[BC] Vanilla": false, 
+    "[BC] BubbleGum": false,
     BlackCoffee: false,
-    Lavender: false,
+    "[BC] Lavender": false,
     Coklat: false,
   };
 
@@ -491,7 +491,7 @@ function App() {
                   className="radio-group"
                   style={{
                     display: "flex",
-                    justifyContent: "center",
+                    justifyContent: "center", 
                     gap: "20px",
                     padding: "0 25px",
                     maxWidth: "450px",
@@ -503,16 +503,17 @@ function App() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      padding: "10px 20px",
-                      border: "1px solid #ddd", 
-                      borderRadius: "25px",
+                      padding: "8px 15px", // Mengurangi padding vertikal dan horizontal
+                      border: "1px solid #ddd",
+                      borderRadius: "25px", 
                       cursor: "pointer",
                       backgroundColor:
                         selectedArea === "kota" ? "#3787F7" : "#fff",
                       color: selectedArea === "kota" ? "#fff" : "#000",
                       fontFamily: "Montserrat, sans-serif",
                       flex: 1,
-                      textAlign: "center"
+                      textAlign: "center",
+                      fontSize: "14px" // Mengurangi ukuran font
                     }}
                   >
                     <input
@@ -527,10 +528,10 @@ function App() {
                   </label>
                   <label
                     style={{
-                      display: "flex", 
-                      alignItems: "center",
+                      display: "flex",
+                      alignItems: "center", 
                       justifyContent: "center",
-                      padding: "10px 20px",
+                      padding: "8px 15px", // Mengurangi padding vertikal dan horizontal
                       border: "1px solid #ddd",
                       borderRadius: "25px",
                       cursor: "pointer",
@@ -539,7 +540,8 @@ function App() {
                       color: selectedArea === "kabupaten" ? "#fff" : "#000",
                       fontFamily: "Montserrat, sans-serif",
                       flex: 1,
-                      textAlign: "center"
+                      textAlign: "center",
+                      fontSize: "14px" // Mengurangi ukuran font
                     }}
                   >
                     <input
@@ -616,7 +618,7 @@ function App() {
                   type="button"
                   className="daftar"
                   onClick={handleGetLocation}
-                  style={{ marginBottom: "10px", backgroundColor: "#3787F7" }}
+                  style={{ marginBottom: "0px", backgroundColor: "#3787F7"}}
                   transition={{ stiffness: 400, damping: 17 }}
                   whileTap={{ scale: 0.9 }}
                 >
@@ -627,12 +629,14 @@ function App() {
               <div
                 className="text"
                 style={{
-                  textAlign: "left",
+                  textAlign: "center",
                   fontFamily: "Montserrat, sans-serif",
                   fontSize: "14px",
                   marginBottom: "20px",
                   color: "#545454",
                   maxWidth: "350px",
+                  paddingLeft: "25px",
+                  paddingRight: "25px",
                 }}
               >
                 PickUp dan Delivery diatas 7km akan dikenakan tarif ongkos
@@ -864,8 +868,7 @@ function App() {
               }}
             >
               <span style={{ color: "#3787F7" }}>
-                Parfum akan diberikan saat setelah item selesai dilakukan
-                treatment!
+                [BC] = Pilihan Parfum Favorit Pelanggan!
               </span>
             </div>
 
@@ -991,7 +994,7 @@ function App() {
                 }}
               >
                 Sampaikan pesan atau permintaan khusus kepada kami! Setelah
-                pesan diterima akan kami pertimbangkan dan respon pesan kamu
+                pesan diterima, akan kami pertimbangkan dan respon pesan Anda.
               </div>
             </div>
             <LazyMotion features={domAnimation}>
