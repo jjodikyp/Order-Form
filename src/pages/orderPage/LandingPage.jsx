@@ -119,10 +119,10 @@ function App() {
   // Load initial aromas state from localStorage
   const initialAromas = JSON.parse(localStorage.getItem("aromas")) || {
     "Apple": false,
-    "[BC] Vanilla": false, 
-    "[BC] BubbleGum": false,
+    "Vanilla": false, 
+    "BubbleGum": false,
     BlackCoffee: false,
-    "[BC] Lavender": false,
+    "Lavender": false,
     Coklat: false,
   };
 
@@ -868,7 +868,7 @@ function App() {
               }}
             >
               <span style={{ color: "#3787F7" }}>
-                [BC] = Pilihan Parfum Favorit Pelanggan!
+                Pilihan Favorit Pelanggan: BlackCoffee, BubbleGum, Lavender
               </span>
             </div>
 
