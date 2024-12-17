@@ -1,31 +1,89 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./member.css";
 import { defineElement } from "lord-icon-element";
 import lottie from "lottie-web";
-import { DatePicker } from "antd";
-import dayjs from 'dayjs';
+import { DatePicker, TimePicker } from "antd";
+import dayjs from "dayjs";
 import { LazyMotion, m, domAnimation } from "framer-motion";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+
+const KOTA_MALANG = {
+  districts: ["Blimbing", "Kedungkandang", "Klojen", "Lowokwaru", "Sukun"],
+};
+
+const KABUPATEN_MALANG = {
+  districts: [
+    "Ampelgading",
+    "Bantur", 
+    "Bululawang",
+    "Dampit",
+    "Dau",
+    "Donomulyo",
+    "Gedangan",
+    "Gondanglegi",
+    "Jabung",
+    "Kalipare",
+    "Karangploso",
+    "Kasembon",
+    "Kepanjen",
+    "Kromengan",
+    "Lawang",
+    "Ngajum",
+    "Ngantang",
+    "Pagak",
+    "Pagelaran",
+    "Pakis",
+    "Pakisaji",
+    "Poncokusumo",
+    "Pujon",
+    "Singosari",
+    "Sumbermanjing Wetan",
+    "Sumberpucung",
+    "Tajinan",
+    "Tirtoyudo",
+    "Tumpang",
+    "Turen",
+    "Wagir",
+    "Wajak",
+    "Wonosari",
+  ],
+};
 
 function App() {
   const navigate = useNavigate();
-  
+
+  // Refs for form elements
+  const nameRef = useRef(null);
+  const addressRef = useRef(null);
+  const itemCountRef = useRef(null);
+  const itemsRef = useRef(null);
+  const treatmentsRef = useRef(null);
+  const aromasRef = useRef(null);
+  const pickupDateRef = useRef(null);
+  const pickupTimeRef = useRef(null);
+
   // Load initial form data from localStorage
-  const initialFormData = JSON.parse(localStorage.getItem('form')) || {
+  const initialFormData = JSON.parse(localStorage.getItem("form")) || {
     name: "",
     address: "",
     itemCount: "",
     selectedItems: [],
-    selectedTreatments: [], 
+    selectedTreatments: [],
     selectedAromas: [],
     pickupDate: null,
+    pickupTime: null,
     specialMessage: "",
-    location: null
+    location: null,
+    selectedArea: "kota",
+    selectedDistrict: "",
   };
 
-  // Convert pickupDate string to dayjs object if exists
+  // Convert pickupDate dan pickupTime string ke dayjs object jika ada
   if (initialFormData.pickupDate) {
     initialFormData.pickupDate = dayjs(initialFormData.pickupDate);
+  }
+  if (initialFormData.pickupTime) {
+    initialFormData.pickupTime = dayjs(initialFormData.pickupTime);
   }
 
   const [formData, setFormData] = useState(initialFormData);
@@ -33,7 +91,7 @@ function App() {
   const [errors, setErrors] = useState({});
 
   // Load initial items state from localStorage
-  const initialItems = JSON.parse(localStorage.getItem('items')) || {
+  const initialItems = JSON.parse(localStorage.getItem("items")) || {
     Sepatu: false,
     Sandal: false,
     SepatuSandal: false,
@@ -46,29 +104,36 @@ function App() {
 
   const [items, setItems] = useState(initialItems);
 
-  // Load initial treatments state from localStorage  
-  const initialTreatments = JSON.parse(localStorage.getItem('treatments')) || {
+  // Load initial treatments state from localStorage
+  const initialTreatments = JSON.parse(localStorage.getItem("treatments")) || {
     DeepClean: false,
     OutsideClean: false,
     UnYellowing: false,
     Repaint: false,
     Reglue: false,
+    Filler: false,
   };
 
   const [treatments, setTreatments] = useState(initialTreatments);
 
   // Load initial aromas state from localStorage
-  const initialAromas = JSON.parse(localStorage.getItem('aromas')) || {
+  const initialAromas = JSON.parse(localStorage.getItem("aromas")) || {
     Apple: false,
     Vanilla: false,
     BubbleGum: false,
-    Grape: false,
     BlackCoffee: false,
     Lavender: false,
     Coklat: false,
   };
 
   const [aromas, setAromas] = useState(initialAromas);
+
+  const [selectedArea, setSelectedArea] = useState(
+    initialFormData.selectedArea
+  );
+  const [selectedDistrict, setSelectedDistrict] = useState(
+    initialFormData.selectedDistrict
+  );
 
   useEffect(() => {
     defineElement(lottie.loadAnimation);
@@ -101,16 +166,16 @@ function App() {
 
   // Save all form data to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('form', JSON.stringify(formData));
-    localStorage.setItem('items', JSON.stringify(items));
-    localStorage.setItem('treatments', JSON.stringify(treatments));
-    localStorage.setItem('aromas', JSON.stringify(aromas));
+    localStorage.setItem("form", JSON.stringify(formData));
+    localStorage.setItem("items", JSON.stringify(items));
+    localStorage.setItem("treatments", JSON.stringify(treatments));
+    localStorage.setItem("aromas", JSON.stringify(aromas));
   }, [formData, items, treatments, aromas]);
 
   const saveFormDataToLocalStorage = (data) => {
-    localStorage.setItem('form', JSON.stringify(data));
+    localStorage.setItem("form", JSON.stringify(data));
   };
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => {
@@ -132,70 +197,80 @@ function App() {
         (position) => {
           const { latitude, longitude } = position.coords;
           const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-          
-          setFormData(prev => {
+
+          setFormData((prev) => {
             const newFormData = {
               ...prev,
-              locationLink: googleMapsLink
+              locationLink: googleMapsLink,
             };
             saveFormDataToLocalStorage(newFormData);
             return newFormData;
           });
 
-          alert('Lokasi berhasil dibagikan! Lokasi anda telah diubah menjadi Link Google Maps dan akan digunakan untuk keperluan pengiriman!');
+          alert(
+            "Lokasi berhasil dibagikan! Lokasi anda telah diubah menjadi Link Google Maps dan akan digunakan untuk keperluan pengiriman!"
+          );
         },
         (error) => {
           console.error("Error getting location:", error);
-          alert('Gagal mendapatkan lokasi. Pastikan GPS aktif dan izin lokasi diberikan.');
+          alert(
+            "Gagal mendapatkan lokasi. Pastikan GPS aktif dan izin lokasi diberikan."
+          );
         },
         {
           enableHighAccuracy: true,
           timeout: 5000,
-          maximumAge: 0
+          maximumAge: 0,
         }
       );
     } else {
       alert("Browser anda tidak mendukung geolokasi.");
     }
   };
-  
+
   const handleCheckboxChange = (category, itemName) => {
     let updatedItems;
     let updatedFormData;
-    
+
     switch (category) {
       case "items":
         updatedItems = { ...items, [itemName]: !items[itemName] };
         setItems(updatedItems);
-        updatedFormData = { 
-          ...formData, 
-          selectedItems: Object.keys(updatedItems).filter(key => updatedItems[key]).map(item => item.toLowerCase())
+        updatedFormData = {
+          ...formData,
+          selectedItems: Object.keys(updatedItems)
+            .filter((key) => updatedItems[key])
+            .map((item) => item.toLowerCase()),
         };
         break;
       case "treatments":
         updatedItems = { ...treatments, [itemName]: !treatments[itemName] };
         setTreatments(updatedItems);
-        updatedFormData = { 
-          ...formData, 
-          selectedTreatments: Object.keys(updatedItems).filter(key => updatedItems[key]).map(treatment => treatment.toLowerCase())
+        updatedFormData = {
+          ...formData,
+          selectedTreatments: Object.keys(updatedItems)
+            .filter((key) => updatedItems[key])
+            .map((treatment) => treatment.toLowerCase()),
         };
         break;
       case "aromas":
         updatedItems = { ...aromas, [itemName]: !aromas[itemName] };
         setAromas(updatedItems);
-        updatedFormData = { 
-          ...formData, 
-          selectedAromas: Object.keys(updatedItems).filter(key => updatedItems[key])
+        updatedFormData = {
+          ...formData,
+          selectedAromas: Object.keys(updatedItems).filter(
+            (key) => updatedItems[key]
+          ),
         };
         break;
       default:
         return;
     }
-  
+
     setFormData(updatedFormData);
     saveFormDataToLocalStorage(updatedFormData);
   };
-  
+
   const handleDateChange = (date) => {
     const updatedFormData = { ...formData, pickupDate: date };
     setFormData(updatedFormData);
@@ -208,29 +283,46 @@ function App() {
     }
   };
 
+  const handleTimeChange = (time) => {
+    const updatedFormData = { ...formData, pickupTime: time };
+    setFormData(updatedFormData);
+    saveFormDataToLocalStorage(updatedFormData);
+    if (errors.pickupTime) {
+      setErrors((prev) => ({
+        ...prev,
+        pickupTime: "",
+      }));
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
+    let firstError = null;
 
     if (!formData.name.trim()) {
       newErrors.name = "[X]";
+      if (!firstError) firstError = nameRef;
     }
 
     if (!formData.address.trim()) {
       newErrors.address = "[X]";
+      if (!firstError) firstError = addressRef;
     }
 
     if (!formData.itemCount.trim()) {
       newErrors.itemCount = "[X]";
+      if (!firstError) firstError = itemCountRef;
     }
 
     const selectedItemsCount = Object.values(items).filter(Boolean).length;
     if (selectedItemsCount === 0) {
       newErrors.items = "Pilih minimal satu item!";
+      if (!firstError) firstError = itemsRef;
     }
 
     const selectedItemsThatNeedTreatment = [
       "Sepatu",
-      "Sandal", 
+      "Sandal",
       "SepatuSandal",
       "HeelsFlatshoes",
     ];
@@ -243,43 +335,96 @@ function App() {
         Object.values(treatments).filter(Boolean).length;
       if (selectedTreatmentsCount === 0) {
         newErrors.treatments = "Pilih minimal satu treatment!";
+        if (!firstError) firstError = treatmentsRef;
       }
     }
 
     const selectedAromasCount = Object.values(aromas).filter(Boolean).length;
     if (selectedAromasCount === 0) {
       newErrors.aromas = "Pilih minimal satu aroma!";
+      if (!firstError) firstError = aromasRef;
     }
 
     if (!formData.pickupDate) {
       newErrors.pickupDate = "Tanggal pick-up harus dipilih!";
+      if (!firstError) firstError = pickupDateRef;
+    }
+
+    if (!formData.pickupTime) {
+      newErrors.pickupTime = "Jam pick-up harus dipilih!";
+      if (!firstError) firstError = pickupTimeRef;
     }
 
     setErrors(newErrors);
+
+    // Scroll to first error if exists
+    if (firstError && firstError.current) {
+      firstError.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      const selectedItemsList = Object.keys(items).filter(key => items[key]).map(item => item.toLowerCase());
-      const selectedTreatmentsList = Object.keys(treatments).filter(key => treatments[key]).map(treatment => treatment.toLowerCase());
-      const selectedAromasList = Object.keys(aromas).filter(key => aromas[key]);
-      
+      const selectedItemsList = Object.keys(items)
+        .filter((key) => items[key])
+        .map((item) => item.toLowerCase());
+      const selectedTreatmentsList = Object.keys(treatments)
+        .filter((key) => treatments[key])
+        .map((treatment) => treatment.toLowerCase());
+      const selectedAromasList = Object.keys(aromas).filter(
+        (key) => aromas[key]
+      );
+
       const finalFormData = {
         ...formData,
         selectedItems: selectedItemsList,
         selectedTreatments: selectedTreatmentsList,
-        selectedAromas: selectedAromasList
+        selectedAromas: selectedAromasList,
       };
-      
+
       saveFormDataToLocalStorage(finalFormData);
-      
+
       console.log("Form is valid!", finalFormData);
       navigate("/first");
     } else {
       console.log("Form is invalid!", errors);
     }
+  };
+
+  const handleAreaChange = (e) => {
+    const newArea = e.target.value;
+    setSelectedArea(newArea);
+    setSelectedDistrict(""); // Reset district saat area berubah
+
+    setFormData((prev) => {
+      const newFormData = {
+        ...prev,
+        selectedArea: newArea,
+        selectedDistrict: "",
+      };
+      localStorage.setItem("form", JSON.stringify(newFormData));
+      return newFormData;
+    });
+  };
+
+  const handleDistrictChange = (e) => {
+    const newDistrict = e.target.value;
+    setSelectedDistrict(newDistrict);
+
+    setFormData((prev) => {
+      const newFormData = {
+        ...prev,
+        selectedDistrict: newDistrict,
+      };
+      localStorage.setItem("form", JSON.stringify(newFormData));
+      return newFormData;
+    });
   };
 
   return (
@@ -311,7 +456,7 @@ function App() {
             style={{ marginTop: "0px" }}
           >
             <div className="inputs" style={{ marginTop: "30px" }}>
-              <div className="input">
+              <div className="input" ref={nameRef}>
                 <input
                   type="text"
                   name="name"
@@ -326,7 +471,7 @@ function App() {
                 )}
               </div>
 
-              <div className="input">
+              <div className="input" ref={addressRef}>
                 <input
                   type="text"
                   name="address"
@@ -341,12 +486,137 @@ function App() {
                 )}
               </div>
 
+              <div className="input-group">
+                <div
+                  className="radio-group"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "20px",
+                    padding: "0 25px",
+                    maxWidth: "450px",
+                    margin: "0 auto",
+                  }}
+                >
+                  <label
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "10px 20px",
+                      border: "1px solid #ddd", 
+                      borderRadius: "25px",
+                      cursor: "pointer",
+                      backgroundColor:
+                        selectedArea === "kota" ? "#3787F7" : "#fff",
+                      color: selectedArea === "kota" ? "#fff" : "#000",
+                      fontFamily: "Montserrat, sans-serif",
+                      flex: 1,
+                      textAlign: "center"
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="area"
+                      value="kota"
+                      checked={selectedArea === "kota"}
+                      onChange={handleAreaChange}
+                      style={{ display: "none" }}
+                    />
+                    Kota Malang
+                  </label>
+                  <label
+                    style={{
+                      display: "flex", 
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "10px 20px",
+                      border: "1px solid #ddd",
+                      borderRadius: "25px",
+                      cursor: "pointer",
+                      backgroundColor:
+                        selectedArea === "kabupaten" ? "#3787F7" : "#fff",
+                      color: selectedArea === "kabupaten" ? "#fff" : "#000",
+                      fontFamily: "Montserrat, sans-serif",
+                      flex: 1,
+                      textAlign: "center"
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="area"
+                      value="kabupaten"
+                      checked={selectedArea === "kabupaten"}
+                      onChange={handleAreaChange}
+                      style={{ display: "none" }}
+                    />
+                    Kabupaten Malang
+                  </label>
+                </div>
+
+                <div>
+                  <select
+                    value={selectedDistrict}
+                    onChange={handleDistrictChange}
+                    className="input"
+                    required
+                    style={{
+                      marginTop: "30px",
+                      fontFamily: "Montserrat, sans-serif",
+                      paddingLeft: "20px",
+                      textIndent: "20px",
+                      color: "#545454",
+                      appearance: "none",
+                      backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                      backgroundRepeat: "no-repeat",
+                      backgroundPosition: "right 20px center",
+                      backgroundSize: "1em",
+                    }}
+                  >
+                    <option value="" disabled>
+                      Pilih Kecamatan
+                    </option>
+                    {selectedArea === "kota"
+                      ? KOTA_MALANG.districts.map((district) => (
+                          <option
+                            key={district}
+                            value={district}
+                            style={{ fontFamily: "Montserrat, sans-serif" }}
+                          >
+                            {district}
+                          </option>
+                        ))
+                      : KABUPATEN_MALANG.districts.map((district) => (
+                          <option
+                            key={district}
+                            value={district}
+                            style={{ fontFamily: "Montserrat, sans-serif" }}
+                          >
+                            {district}
+                          </option>
+                        ))}
+                  </select>
+                  {!selectedDistrict && (
+                    <div
+                      style={{
+                        color: "red",
+                        fontSize: "12px",
+                        marginTop: "2px",
+                        marginLeft: "20px",
+                      }}
+                    >
+                      Kecamatan wajib dipilih
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <LazyMotion features={domAnimation}>
                 <m.button
                   type="button"
                   className="daftar"
                   onClick={handleGetLocation}
-                  style={{ marginBottom: "10px" }}
+                  style={{ marginBottom: "10px", backgroundColor: "#3787F7" }}
                   transition={{ stiffness: 400, damping: 17 }}
                   whileTap={{ scale: 0.9 }}
                 >
@@ -370,7 +640,7 @@ function App() {
               </div>
             </div>
 
-            <div className="input">
+            <div className="input" ref={itemCountRef}>
               <input
                 type="number"
                 name="itemCount"
@@ -418,6 +688,7 @@ function App() {
                 padding: "10px",
                 paddingLeft: "20px",
               }}
+              ref={itemsRef}
             >
               {Object.keys(items).map((itemName) => (
                 <label
@@ -473,6 +744,7 @@ function App() {
                 padding: "10px",
                 paddingLeft: "20px",
               }}
+              ref={treatmentsRef}
             >
               {Object.keys(treatments).map((treatmentName) => (
                 <label
@@ -518,8 +790,10 @@ function App() {
                 paddingLeft: "20px",
               }}
             >
-              Tidak perlu memilih treatment, jika item yang kamu masukan adalah
-              Topi/Helm/Tas/Stroller
+              <span style={{ color: "#3787F7" }}>
+                Tidak perlu memilih treatment, jika item yang kamu masukan
+                adalah Topi/Helm/Tas/Stroller
+              </span>
             </div>
 
             <div
@@ -547,6 +821,7 @@ function App() {
                 padding: "10px",
                 paddingLeft: "20px",
               }}
+              ref={aromasRef}
             >
               {Object.keys(aromas).map((aromaName) => (
                 <label
@@ -588,8 +863,10 @@ function App() {
                 paddingLeft: "20px",
               }}
             >
-              Parfum akan diberikan saat setelah item selesai dilakukan
-              treatment!
+              <span style={{ color: "#3787F7" }}>
+                Parfum akan diberikan saat setelah item selesai dilakukan
+                treatment!
+              </span>
             </div>
 
             <div
@@ -619,31 +896,75 @@ function App() {
             >
               Admin akan menghubungi anda untuk konfirmasi tanggal pick-up!
             </div>
-            <DatePicker
-              className="input"
-              style={{
-                maxWidth: "450px",
-                height: "40px",
-                borderRadius: "20px",
-                marginTop: "10px",
-              }}
-              onChange={handleDateChange}
-              value={formData.pickupDate ? dayjs(formData.pickupDate) : null}
-            />
-            {errors.pickupDate && (
-              <div
+            <div ref={pickupDateRef}>
+              <DatePicker
+                className="input"
                 style={{
-                  color: "red",
-                  fontSize: "12px",
-                  paddingLeft: "20px",
+                  maxWidth: "450px",
+                  height: "40px",
+                  borderRadius: "20px",
                   marginTop: "10px",
                 }}
-              >
-                {errors.pickupDate}
-              </div>
-            )}
+                onChange={handleDateChange}
+                value={formData.pickupDate ? dayjs(formData.pickupDate) : null}
+                readOnly
+                inputReadOnly={true} // Mencegah keyboard muncul di iPhone
+                editable={false} // Mencegah keyboard muncul di iPhone
+                placeholder="Pilih tanggal pick-up"
+              />
+              {errors.pickupDate && (
+                <div
+                  style={{
+                    color: "red",
+                    fontSize: "12px",
+                    paddingLeft: "20px",
+                    marginTop: "10px",
+                  }}
+                >
+                  {errors.pickupDate}
+                </div>
+              )}
+            </div>
 
-            <div className="inputs" style={{ marginTop: "30px" }}>
+            <div
+              className="text"
+              style={{
+                textAlign: "left",
+                fontWeight: "bold",
+                fontFamily: "Montserrat, sans-serif",
+                fontSize: "15px",
+                marginTop: "25px",
+                color: "black",
+                paddingLeft: "20px",
+              }}
+            >
+              Request Jam Pick-Up
+            </div>
+
+            <div ref={pickupTimeRef} style={{ padding: "0 20px" }}>
+              <TimePicker
+                use12Hours
+                format="hh:mm A"
+                className="input"
+                placeholder="Pilih jam pick-up"
+                value={formData.pickupTime}
+                onChange={handleTimeChange}
+                style={{
+                  height: "40px",
+                  marginTop: "10px",
+                }}
+                readOnly
+                inputReadOnly={true} // Mencegah keyboard muncul di iPhone
+                editable={false} // Mencegah keyboard muncul di iPhone
+              />
+              {errors.pickupTime && (
+                <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>
+                  {errors.pickupTime}
+                </div>
+              )}
+            </div>
+
+            <div className="inputs" style={{ marginTop: "20px" }}>
               <div>
                 <textarea
                   className="inputPesan"
@@ -658,12 +979,15 @@ function App() {
               <div
                 className="text"
                 style={{
-                  textAlign: "left",
+                  textAlign: "center",
                   fontFamily: "Montserrat, sans-serif",
                   fontSize: "14px",
                   marginBottom: "15px",
                   color: "#545454",
                   maxWidth: "350px",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  marginBottom: "30px",
                 }}
               >
                 Sampaikan pesan atau permintaan khusus kepada kami! Setelah
@@ -674,6 +998,7 @@ function App() {
               <m.button
                 type="submit"
                 className="daftar"
+                style={{ backgroundColor: "#3787F7" }}
                 transition={{ stiffness: 400, damping: 17 }}
                 whileTap={{ scale: 0.9 }}
               >
