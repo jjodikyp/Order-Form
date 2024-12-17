@@ -679,7 +679,9 @@ ${cartDetails}`;
                           padding: "10px",
                           borderRadius: "10px",
                           border: "1px solid #ccc",
-                          fontFamily: "Montserrat, sans-serif"
+                          fontFamily: "Montserrat, sans-serif",
+                          backgroundColor: "white",
+                          color: "black"
                         }}
                       />
                     </div>
