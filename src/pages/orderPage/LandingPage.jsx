@@ -312,7 +312,7 @@ function App() {
 
   // Perbaikan fungsi disabledTime untuk membatasi jam yang bisa dipilih
   const disabledTime = () => ({
-    disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 8, 18, 19, 20, 21, 22, 23],
+    disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 8, 20, 21, 22, 23],
     disabledMinutes: () => [],
     disabledSeconds: () => []
   });
@@ -321,7 +321,7 @@ function App() {
   const handleTimeChange = (time) => {
     if (time) {
       const hour = time.hour();
-      if (hour >= 9 && hour < 18) { // Mengubah batas atas menjadi 18
+      if (hour >= 9 && hour < 20) {
         const updatedFormData = { ...formData, pickupTime: time };
         setFormData(updatedFormData);
         saveFormDataToLocalStorage(updatedFormData);
@@ -993,7 +993,7 @@ function App() {
               <TimePicker
                 format="HH:mm"
                 className="input"
-                placeholder="Pilih jam pick-up (09:00 - 17:00)"
+                placeholder="Pilih jam pick-up (09:00 - 19:00)"
                 value={formData.pickupTime}
                 onChange={handleTimeChange}
                 style={{
@@ -1086,7 +1086,7 @@ function App() {
             }}
           >
             <p style={{ marginBottom: '20px', fontSize: '14px', lineHeight: '1.5' }}>
-              Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 09.00 sampai 17.00. 
+              Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 09.00 sampai 19.00. 
               Silahkan pindah ke hari selanjutnya apabila sudah melewati batas jam PickUp. 
               Terima Kasih
             </p>
