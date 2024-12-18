@@ -73,17 +73,15 @@ button:focus-visible {
   }
 }
 
-:where(.css-dev-only-do-not-override-98ntnt).ant-picker-dropdown
-  .ant-picker-panel-container {
+.ant-picker-dropdown .ant-picker-panel-container {
   width: 100%;
 }
 
-:where(.css-dev-only-do-not-override-98ntnt).ant-picker-dropdown
-  .ant-picker-time-panel-column {
+.ant-picker-dropdown .ant-picker-time-panel-column {
   width: 100px;
 }
 
-:where(.css-dev-only-do-not-override-98ntnt).ant-picker-dropdown
+.ant-picker-dropdown
   .ant-picker-time-panel-column
   > li.ant-picker-time-panel-cell-disabled
   .ant-picker-time-panel-cell-inner {
@@ -91,7 +89,7 @@ button:focus-visible {
   text-align: center;
 }
 
-:where(.css-dev-only-do-not-override-98ntnt).ant-picker-dropdown
+.ant-picker-dropdown
   .ant-picker-time-panel-column
   > li.ant-picker-time-panel-cell
   .ant-picker-time-panel-cell-inner {
