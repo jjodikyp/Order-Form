@@ -15,7 +15,7 @@
     "@mui/x-date-pickers": "^7.9.0",
     "antd": "^5.19.1",
     "dayjs": "^1.11.13",
-    "framer-motion": "^11.2.10",
+    "framer-motion": "^11.15.0",
     "lord-icon-element": "^4.1.2",
     "lottie-web": "^5.12.2",
     "moment": "^2.30.1",

@@ -135,6 +135,11 @@ function App() {
     initialFormData.selectedDistrict
   );
 
+  // Modifikasi state popup dengan mengecek sessionStorage
+  const [showPickupTimePopup, setShowPickupTimePopup] = useState(() => {
+    return false;
+  });
+
   useEffect(() => {
     defineElement(lottie.loadAnimation);
 
@@ -163,6 +168,28 @@ function App() {
       });
     };
   }, []);
+
+  // Modifikasi useEffect untuk menampilkan popup
+  useEffect(() => {
+    const handleScroll = () => {
+      const pickupTimeElement = pickupTimeRef.current;
+      if (pickupTimeElement) {
+        const rect = pickupTimeElement.getBoundingClientRect();
+        if (rect.top < window.innerHeight && !sessionStorage.getItem('pickupTimePopupShown')) {
+          setShowPickupTimePopup(true);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Modifikasi handler untuk menutup popup
+  const handleClosePopup = () => {
+    setShowPickupTimePopup(false);
+    sessionStorage.setItem('pickupTimePopupShown', 'true');
+  };
 
   // Save all form data to localStorage whenever it changes
   useEffect(() => {
@@ -283,15 +310,32 @@ function App() {
     }
   };
 
+  // Perbaikan fungsi disabledTime untuk membatasi jam yang bisa dipilih
+  const disabledTime = () => ({
+    disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 8, 18, 19, 20, 21, 22, 23],
+    disabledMinutes: () => [],
+    disabledSeconds: () => []
+  });
+
+  // Modifikasi handleTimeChange untuk memvalidasi waktu
   const handleTimeChange = (time) => {
-    const updatedFormData = { ...formData, pickupTime: time };
-    setFormData(updatedFormData);
-    saveFormDataToLocalStorage(updatedFormData);
-    if (errors.pickupTime) {
-      setErrors((prev) => ({
-        ...prev,
-        pickupTime: "",
-      }));
+    if (time) {
+      const hour = time.hour();
+      if (hour >= 9 && hour < 18) { // Mengubah batas atas menjadi 18
+        const updatedFormData = { ...formData, pickupTime: time };
+        setFormData(updatedFormData);
+        saveFormDataToLocalStorage(updatedFormData);
+        if (errors.pickupTime) {
+          setErrors((prev) => ({
+            ...prev,
+            pickupTime: "",
+          }));
+        }
+      }
+    } else {
+      const updatedFormData = { ...formData, pickupTime: null };
+      setFormData(updatedFormData);
+      saveFormDataToLocalStorage(updatedFormData);
     }
   };
 
@@ -619,7 +663,7 @@ function App() {
                   className="daftar"
                   onClick={handleGetLocation}
                   style={{ marginBottom: "0px", backgroundColor: "#3787F7"}}
-                  transition={{ stiffness: 400, damping: 17 }}
+                  transition={{ stiffness: 1000, damping: 5 }}
                   whileTap={{ scale: 0.9 }}
                 >
                   Bagikan Lokasi (Google Maps)
@@ -937,6 +981,7 @@ function App() {
                 fontFamily: "Montserrat, sans-serif",
                 fontSize: "15px",
                 marginTop: "25px",
+                marginBottom: "10px",
                 color: "black",
                 paddingLeft: "20px",
               }}
@@ -946,19 +991,20 @@ function App() {
 
             <div ref={pickupTimeRef} style={{ padding: "0 20px" }}>
               <TimePicker
-                use12Hours
-                format="hh:mm A"
+                format="HH:mm"
                 className="input"
-                placeholder="Pilih jam pick-up"
+                placeholder="Pilih jam pick-up (09:00 - 17:00)"
                 value={formData.pickupTime}
                 onChange={handleTimeChange}
                 style={{
                   height: "40px",
-                  marginTop: "10px",
                 }}
+                disabledTime={disabledTime}
+                minuteStep={30}
+                showNow={false}
                 readOnly
-                inputReadOnly={true} // Mencegah keyboard muncul di iPhone
-                editable={false} // Mencegah keyboard muncul di iPhone
+                inputReadOnly={true}
+                editable={false}
               />
               {errors.pickupTime && (
                 <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>
@@ -1002,7 +1048,7 @@ function App() {
                 type="submit"
                 className="daftar"
                 style={{ backgroundColor: "#3787F7" }}
-                transition={{ stiffness: 400, damping: 17 }}
+                transition={{ stiffness: 1000, damping: 5 }}
                 whileTap={{ scale: 0.9 }}
               >
                 Lanjutkan
@@ -1011,6 +1057,61 @@ function App() {
           </form>
         </div>
       </div>
+
+      {/* Tambahkan popup notification */}
+      {showPickupTimePopup && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+          }}
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              padding: '20px',
+              borderRadius: '10px',
+              maxWidth: '400px',
+              width: '80%',
+              textAlign: 'center',
+              fontFamily: 'Montserrat, sans-serif'
+            }}
+          >
+            <p style={{ marginBottom: '20px', fontSize: '14px', lineHeight: '1.5' }}>
+              Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 09.00 sampai 17.00. 
+              Silahkan pindah ke hari selanjutnya apabila sudah melewati batas jam PickUp. 
+              Terima Kasih
+            </p>
+            <LazyMotion features={domAnimation}>
+              <m.button
+                onClick={handleClosePopup}
+                style={{
+                  backgroundColor: '#3787F7',
+                  color: 'white', 
+                  padding: '10px 20px',
+                  border: 'none',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  fontFamily: 'Montserrat, sans-serif',
+                  fontSize: '14px'
+                }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ stiffness: 1000, damping: 5 }}
+              >
+                Baik, Saya Paham
+              </m.button>
+            </LazyMotion>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./member.css";
 import { LazyMotion, m, domAnimation } from "framer-motion";
-import ParfumWeb from "../../assets/images/ParfumWeb.svg";
 import TaliSepatu from "../../assets/images/talisepatu.png";
 import PaketTambahan from "../../assets/images/tambahan.jpg";
+import Parfum from "../../assets/images/parfum.png";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 
@@ -92,10 +92,12 @@ function FirstPage() {
   ];
 
   const paketVariants = [
-    { name: "Suede Care", price: 10000 },
+    { name: "Suede Care", price: 20000 },
     { name: "Penghilang Bau", price: 15000 },
     { name: "Tambahan Pengharum", price: 5000 },
-    { name: "Penghilang Noda", price: 5000 }
+    { name: "Penghilang Noda", price: 15000 },
+    { name: "Leather Care", price: 20000 },
+    { name: "Penghilang Jamur", price: 15000 }
   ];
 
   useEffect(() => {
@@ -266,7 +268,7 @@ ${cartDetails}`;
           <div className="katalog" style={{ marginTop: "20px", position: "relative" }}>
             <div className="product-image" style={{ marginRight: "10px" }}>
               <img 
-                src={ParfumWeb} 
+                src={Parfum} 
                 alt="Produk" 
                 loading="lazy"
                 width="80"
@@ -292,7 +294,7 @@ ${cartDetails}`;
                   onClick={handlePesanClick}
                   className="order-button"
                   whileTap={{ scale: 0.9 }}
-                  transition={{ stiffness: 400, damping: 17 }}
+                  transition={{ stiffness: 1000, damping: 5 }}
                   style={{
                     backgroundColor: "#3787F7",
                     color: "white",
@@ -340,7 +342,7 @@ ${cartDetails}`;
                   onClick={handleShoelacePesanClick}
                   className="order-button"
                   whileTap={{ scale: 0.9 }}
-                  transition={{ stiffness: 400, damping: 17 }}
+                  transition={{ stiffness: 1000, damping: 5 }}
                   style={{
                     backgroundColor: "#3787F7",
                     color: "white",
@@ -388,7 +390,7 @@ ${cartDetails}`;
                   onClick={handlePaketPesanClick}
                   className="order-button"
                   whileTap={{ scale: 0.9 }}
-                  transition={{ stiffness: 400, damping: 17 }}
+                  transition={{ stiffness: 1000, damping: 5 }}
                   style={{
                     backgroundColor: "#3787F7",
                     color: "white",
@@ -530,7 +532,7 @@ ${cartDetails}`;
                       <m.button 
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
                         whileTap={{ scale: 0.9 }}
-                        transition={{ stiffness: 400, damping: 17 }}
+                        transition={{ stiffness: 1000, damping: 5 }}
                         style={{
                           padding: "10px 15px",
                           borderRadius: "50%",
@@ -552,7 +554,7 @@ ${cartDetails}`;
                       <m.button 
                         onClick={() => setQuantity(quantity + 1)}
                         whileTap={{ scale: 0.9 }}
-                        transition={{ stiffness: 400, damping: 17 }}
+                        transition={{ stiffness: 1000, damping: 5 }}
                         style={{
                           padding: "10px 15px",
                           borderRadius: "50%",
@@ -575,7 +577,7 @@ ${cartDetails}`;
                     <m.button
                       onClick={handleAddToCart}
                       whileTap={{ scale: 0.9 }}
-                      transition={{ stiffness: 400, damping: 17 }}
+                      transition={{ stiffness: 1000, damping: 5 }}
                       style={{
                         backgroundColor: "#3787F7",
                         color: "white",
@@ -594,7 +596,7 @@ ${cartDetails}`;
                     <m.button
                       onClick={() => setShowPopup(false)}
                       whileTap={{ scale: 0.9 }}
-                      transition={{ stiffness: 400, damping: 17 }}
+                      transition={{ stiffness: 1000, damping: 5 }}
                       style={{
                         backgroundColor: "#545454",
                         color: "white",
@@ -693,7 +695,7 @@ ${cartDetails}`;
                       <m.button 
                         onClick={() => setShoelaceQuantity(Math.max(1, shoelaceQuantity - 1))}
                         whileTap={{ scale: 0.9 }}
-                        transition={{ stiffness: 400, damping: 17 }}
+                        transition={{ stiffness: 1000, damping: 5 }}
                         style={{
                           padding: "10px 15px",
                           borderRadius: "50%",
@@ -715,7 +717,7 @@ ${cartDetails}`;
                       <m.button 
                         onClick={() => setShoelaceQuantity(shoelaceQuantity + 1)}
                         whileTap={{ scale: 0.9 }}
-                        transition={{ stiffness: 400, damping: 17 }}
+                        transition={{ stiffness: 1000, damping: 5 }}
                         style={{
                           padding: "10px 15px",
                           borderRadius: "50%",
@@ -738,7 +740,7 @@ ${cartDetails}`;
                     <m.button
                       onClick={handleAddShoelaceToCart}
                       whileTap={{ scale: 0.9 }}
-                      transition={{ stiffness: 400, damping: 17 }}
+                      transition={{ stiffness: 1000, damping: 5 }}
                       style={{
                         backgroundColor: "#3787F7",
                         color: "white",
@@ -761,7 +763,7 @@ ${cartDetails}`;
                         setCustomColor("");
                       }}
                       whileTap={{ scale: 0.9 }}
-                      transition={{ stiffness: 400, damping: 17 }}
+                      transition={{ stiffness: 1000, damping: 5 }}
                       style={{
                         backgroundColor: "#545454",
                         color: "white",
@@ -844,7 +846,7 @@ ${cartDetails}`;
                       <m.button 
                         onClick={() => setPaketQuantity(Math.max(1, paketQuantity - 1))}
                         whileTap={{ scale: 0.9 }}
-                        transition={{ stiffness: 400, damping: 17 }}
+                        transition={{ stiffness: 1000, damping: 5 }}
                         style={{
                           padding: "10px 15px",
                           borderRadius: "50%",
@@ -866,7 +868,7 @@ ${cartDetails}`;
                       <m.button 
                         onClick={() => setPaketQuantity(paketQuantity + 1)}
                         whileTap={{ scale: 0.9 }}
-                        transition={{ stiffness: 400, damping: 17 }}
+                        transition={{ stiffness: 1000, damping: 5 }}
                         style={{
                           padding: "10px 15px",
                           borderRadius: "50%",
@@ -889,7 +891,7 @@ ${cartDetails}`;
                     <m.button
                       onClick={handleAddPaketToCart}
                       whileTap={{ scale: 0.9 }}
-                      transition={{ stiffness: 400, damping: 17 }}
+                      transition={{ stiffness: 1000, damping: 5 }}
                       style={{
                         backgroundColor: "#3787F7",
                         color: "white",
@@ -911,7 +913,7 @@ ${cartDetails}`;
                         setSelectedPaket("");
                       }}
                       whileTap={{ scale: 0.9 }}
-                      transition={{ stiffness: 400, damping: 17 }}
+                      transition={{ stiffness: 1000, damping: 5 }}
                       style={{
                         backgroundColor: "#545454",
                         color: "white",
@@ -1015,7 +1017,7 @@ ${cartDetails}`;
                 <m.button
                   className="kembali"
                   whileTap={{ scale: 0.9 }}
-                  transition={{ stiffness: 400, damping: 17 }}
+                  transition={{ stiffness: 1000, damping: 5 }}
                   type="button"
                   style={{
                     marginTop: "10px",
@@ -1030,7 +1032,7 @@ ${cartDetails}`;
               <m.button
                 className="daftar"
                 whileTap={{ scale: 0.9 }}
-                transition={{ stiffness: 400, damping: 17 }}
+                transition={{ stiffness: 1000, damping: 5 }}
                 type="button"
                 onClick={handleKirimPesanan}
                 style={{
