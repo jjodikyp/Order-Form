@@ -75,7 +75,7 @@ button:focus-visible {
 
 :where(.css-dev-only-do-not-override-98ntnt).ant-picker-dropdown
   .ant-picker-panel-container {
-  width: 50%;
+  width: 100%;
 }
 
 :where(.css-dev-only-do-not-override-98ntnt).ant-picker-dropdown
