@@ -2,10 +2,12 @@ import React, { useEffect, useState, useRef } from "react";
 import "./member.css";
 import { defineElement } from "lord-icon-element";
 import lottie from "lottie-web";
-import { DatePicker, TimePicker } from "antd";
+import { DatePicker } from "antd";
+import { TimePicker } from "rsuite";
 import dayjs from "dayjs";
 import { LazyMotion, m, domAnimation } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import "rsuite/dist/rsuite.min.css";
 
 const KOTA_MALANG = {
   districts: ["Blimbing", "Kedungkandang", "Klojen", "Lowokwaru", "Sukun"],
@@ -14,7 +16,7 @@ const KOTA_MALANG = {
 const KABUPATEN_MALANG = {
   districts: [
     "Ampelgading",
-    "Bantur", 
+    "Bantur",
     "Bululawang",
     "Dampit",
     "Dau",
@@ -118,11 +120,11 @@ function App() {
 
   // Load initial aromas state from localStorage
   const initialAromas = JSON.parse(localStorage.getItem("aromas")) || {
-    "Apple": false,
-    "Vanilla": false, 
-    "BubbleGum": false,
+    Apple: false,
+    Vanilla: false,
+    BubbleGum: false,
     BlackCoffee: false,
-    "Lavender": false,
+    Lavender: false,
     Coklat: false,
   };
 
@@ -175,20 +177,23 @@ function App() {
       const pickupTimeElement = pickupTimeRef.current;
       if (pickupTimeElement) {
         const rect = pickupTimeElement.getBoundingClientRect();
-        if (rect.top < window.innerHeight && !sessionStorage.getItem('pickupTimePopupShown')) {
+        if (
+          rect.top < window.innerHeight &&
+          !sessionStorage.getItem("pickupTimePopupShown")
+        ) {
           setShowPickupTimePopup(true);
         }
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Modifikasi handler untuk menutup popup
   const handleClosePopup = () => {
     setShowPickupTimePopup(false);
-    sessionStorage.setItem('pickupTimePopupShown', 'true');
+    sessionStorage.setItem("pickupTimePopupShown", "true");
   };
 
   // Save all form data to localStorage whenever it changes
@@ -310,17 +315,10 @@ function App() {
     }
   };
 
-  // Perbaikan fungsi disabledTime untuk membatasi jam yang bisa dipilih
-  const disabledTime = () => ({
-    disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 8, 20, 21, 22, 23],
-    disabledMinutes: () => [],
-    disabledSeconds: () => []
-  });
-
-  // Modifikasi handleTimeChange untuk memvalidasi waktu
+  // Modifikasi handleTimeChange untuk format rsuite TimePicker
   const handleTimeChange = (time) => {
     if (time) {
-      const hour = time.hour();
+      const hour = new Date(time).getHours();
       if (hour >= 9 && hour < 20) {
         const updatedFormData = { ...formData, pickupTime: time };
         setFormData(updatedFormData);
@@ -337,6 +335,11 @@ function App() {
       setFormData(updatedFormData);
       saveFormDataToLocalStorage(updatedFormData);
     }
+  };
+
+  // Fungsi untuk membatasi waktu yang bisa dipilih
+  const disabledHours = (hour) => {
+    return hour < 9 || hour >= 20;
   };
 
   const validateForm = () => {
@@ -403,9 +406,9 @@ function App() {
 
     // Scroll to first error if exists
     if (firstError && firstError.current) {
-      firstError.current.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'center'
+      firstError.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
       });
     }
 
@@ -471,6 +474,12 @@ function App() {
     });
   };
 
+  const [time, setTime] = useState("");
+
+  const handleTimeChangeTime = (event) => {
+    setTime(event.target.value);
+  };
+
   return (
     <div className="w-full flex justify-center items-center">
       <div className="container w-full flex justify-center">
@@ -483,7 +492,7 @@ function App() {
                 fontWeight: "bold",
                 fontFamily: "Montserrat, sans-serif",
                 fontSize: "26px",
-                marginTop: "15px",
+                marginTop: "0px",
                 color: "black",
               }}
             >
@@ -535,7 +544,7 @@ function App() {
                   className="radio-group"
                   style={{
                     display: "flex",
-                    justifyContent: "center", 
+                    justifyContent: "center",
                     gap: "20px",
                     padding: "0 25px",
                     maxWidth: "450px",
@@ -549,7 +558,7 @@ function App() {
                       justifyContent: "center",
                       padding: "8px 15px", // Mengurangi padding vertikal dan horizontal
                       border: "1px solid #ddd",
-                      borderRadius: "25px", 
+                      borderRadius: "25px",
                       cursor: "pointer",
                       backgroundColor:
                         selectedArea === "kota" ? "#3787F7" : "#fff",
@@ -557,7 +566,7 @@ function App() {
                       fontFamily: "Montserrat, sans-serif",
                       flex: 1,
                       textAlign: "center",
-                      fontSize: "14px" // Mengurangi ukuran font
+                      fontSize: "14px", // Mengurangi ukuran font
                     }}
                   >
                     <input
@@ -573,7 +582,7 @@ function App() {
                   <label
                     style={{
                       display: "flex",
-                      alignItems: "center", 
+                      alignItems: "center",
                       justifyContent: "center",
                       padding: "8px 15px", // Mengurangi padding vertikal dan horizontal
                       border: "1px solid #ddd",
@@ -585,7 +594,7 @@ function App() {
                       fontFamily: "Montserrat, sans-serif",
                       flex: 1,
                       textAlign: "center",
-                      fontSize: "14px" // Mengurangi ukuran font
+                      fontSize: "14px", // Mengurangi ukuran font
                     }}
                   >
                     <input
@@ -662,7 +671,7 @@ function App() {
                   type="button"
                   className="daftar"
                   onClick={handleGetLocation}
-                  style={{ marginBottom: "0px", backgroundColor: "#3787F7"}}
+                  style={{ marginBottom: "0px", backgroundColor: "#3787F7" }}
                   transition={{ stiffness: 1000, damping: 5 }}
                   whileTap={{ scale: 0.9 }}
                 >
@@ -989,31 +998,35 @@ function App() {
               Request Jam Pick-Up
             </div>
 
-            <div ref={pickupTimeRef} style={{ padding: "0 20px" }}>
-              <TimePicker
-                format="HH:mm"
-                className="input"
-                placeholder="Pilih jam pick-up (09:00 - 19:00)"
-                value={formData.pickupTime}
-                onChange={handleTimeChange}
-                style={{
-                  height: "40px",
-                }}
-                disabledTime={disabledTime}
-                minuteStep={30}
-                showNow={false}
-                readOnly
-                inputReadOnly={true}
-                editable={false}
-              />
-              {errors.pickupTime && (
-                <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>
-                  {errors.pickupTime}
-                </div>
-              )}
-            </div>
+            <input
+              type="time"
+              className="input"
+              style={{
+                alignItems: "center",
+                maxWidth: "450px",
+                height: "40px",
+                borderRadius: "20px",
+                marginTop: "10px",
+              }}
+            />
 
-            <div className="inputs" style={{ marginTop: "20px" }}>
+            <div className="inputs" style={{ marginTop: "10px" }}>
+              <div
+                className="text"
+                style={{
+                  textAlign: "center",
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "12px",
+                  color: "#545454",
+                  maxWidth: "450px",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  color: "#3787F7",
+                  fontWeight: "bold", 
+                }}
+              >
+                Klik kolom diatas untuk memilih jam pick-up!
+              </div>
               <div>
                 <textarea
                   className="inputPesan"
@@ -1060,48 +1073,54 @@ function App() {
 
       {/* Tambahkan popup notification */}
       {showPickupTimePopup && (
-        <div 
+        <div
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
           }}
         >
-          <div 
+          <div
             style={{
-              backgroundColor: 'white',
-              padding: '20px',
-              borderRadius: '10px',
-              maxWidth: '400px',
-              width: '80%',
-              textAlign: 'center',
-              fontFamily: 'Montserrat, sans-serif'
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "10px",
+              maxWidth: "400px",
+              width: "80%",
+              textAlign: "center",
+              fontFamily: "Montserrat, sans-serif",
             }}
           >
-            <p style={{ marginBottom: '20px', fontSize: '14px', lineHeight: '1.5' }}>
-              Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 09.00 sampai 19.00. 
-              Silahkan pindah ke hari selanjutnya apabila sudah melewati batas jam PickUp. 
-              Terima Kasih
+            <p
+              style={{
+                marginBottom: "20px",
+                fontSize: "14px",
+                lineHeight: "1.5",
+              }}
+            >
+              Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 09.00 sampai
+              17.00. Silahkan pindah ke hari selanjutnya apabila sudah melewati
+              batas jam PickUp. Terima Kasih
             </p>
             <LazyMotion features={domAnimation}>
               <m.button
                 onClick={handleClosePopup}
                 style={{
-                  backgroundColor: '#3787F7',
-                  color: 'white', 
-                  padding: '10px 20px',
-                  border: 'none',
-                  borderRadius: '20px',
-                  cursor: 'pointer',
-                  fontFamily: 'Montserrat, sans-serif',
-                  fontSize: '14px'
+                  backgroundColor: "#3787F7",
+                  color: "white",
+                  padding: "10px 20px",
+                  border: "none",
+                  borderRadius: "20px",
+                  cursor: "pointer",
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "14px",
                 }}
                 whileTap={{ scale: 0.9 }}
                 transition={{ stiffness: 1000, damping: 5 }}

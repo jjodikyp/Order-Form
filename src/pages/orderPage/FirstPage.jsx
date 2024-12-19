@@ -256,7 +256,7 @@ ${cartDetails}`;
               fontWeight: "bold",
               fontFamily: "Montserrat, sans-serif",
               fontSize: "26px",
-              marginTop: "15px",
+              marginTop: "0px",
               color: "black",
             }}>
               Pembelian&nbsp;
