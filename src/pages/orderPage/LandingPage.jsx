@@ -63,6 +63,7 @@ function App() {
   const aromasRef = useRef(null);
   const pickupDateRef = useRef(null);
   const pickupTimeRef = useRef(null);
+  const timePickerRef = useRef(null);
 
   // Load initial form data from localStorage
   const initialFormData = (() => {
@@ -145,6 +146,9 @@ function App() {
     return false;
   });
 
+  // Tambahkan state untuk mengontrol popup time picker
+  const [showTimePickerPopup, setShowTimePickerPopup] = useState(false);
+
   useEffect(() => {
     defineElement(lottie.loadAnimation);
 
@@ -177,14 +181,14 @@ function App() {
   // Modifikasi useEffect untuk menampilkan popup
   useEffect(() => {
     const handleScroll = () => {
-      const pickupTimeElement = pickupTimeRef.current;
-      if (pickupTimeElement) {
-        const rect = pickupTimeElement.getBoundingClientRect();
+      const timePickerElement = timePickerRef.current;
+      if (timePickerElement) {
+        const rect = timePickerElement.getBoundingClientRect();
         if (
           rect.top < window.innerHeight &&
-          !sessionStorage.getItem("pickupTimePopupShown")
+          !sessionStorage.getItem("timePickerPopupShown")
         ) {
-          setShowPickupTimePopup(true);
+          setShowTimePickerPopup(true);
         }
       }
     };
@@ -478,6 +482,19 @@ function App() {
     console.log('Current formData:', formData);
     console.log('localStorage form:', localStorage.getItem("form"));
   }, [formData.pickupTime]);
+
+  // Tambahkan handler untuk membuka time picker
+  const handleTimePickerFocus = () => {
+    if (!sessionStorage.getItem("timePickerPopupShown")) {
+      setShowTimePickerPopup(true);
+    }
+  };
+
+  // Modifikasi handler untuk menutup popup
+  const handleCloseTimePickerPopup = () => {
+    setShowTimePickerPopup(false);
+    sessionStorage.setItem("timePickerPopupShown", "true");
+  };
 
   return (
     <div className="w-full flex justify-center items-center">
@@ -1001,10 +1018,10 @@ function App() {
                 paddingLeft: "20px",
               }}
             >
-              Request Jam Pick-Up
+              Request Jam Pick-Up (Optional)
             </div>
 
-            <div style={{ padding: "0 20px" }}>
+            <div ref={timePickerRef} style={{ padding: "0 20px" }}>
               <form className="w-[290px] mx-auto">
                 <div className="flex">
                   <input
@@ -1130,6 +1147,67 @@ function App() {
             <LazyMotion features={domAnimation}>
               <m.button
                 onClick={handleClosePopup}
+                style={{
+                  backgroundColor: "#3787F7",
+                  color: "white",
+                  padding: "10px 20px",
+                  border: "none",
+                  borderRadius: "20px",
+                  cursor: "pointer",
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "14px",
+                }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ stiffness: 1000, damping: 5 }}
+              >
+                Baik, Saya Paham
+              </m.button>
+            </LazyMotion>
+          </div>
+        </div>
+      )}
+
+      {/* Tambahkan popup untuk time picker */}
+      {showTimePickerPopup && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "10px",
+              maxWidth: "400px",
+              width: "80%",
+              textAlign: "center",
+              fontFamily: "Montserrat, sans-serif",
+            }}
+          >
+            <p
+              style={{
+                marginBottom: "20px",
+                fontSize: "14px",
+                lineHeight: "1.5",
+              }}
+            >
+              Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 09.00 sampai
+              17.00. Silahkan pindah ke hari selanjutnya apabila sudah melewati
+              batas jam PickUp. Terima Kasih
+            </p>
+            <LazyMotion features={domAnimation}>
+              <m.button
+                onClick={handleCloseTimePickerPopup}
                 style={{
                   backgroundColor: "#3787F7",
                   color: "white",

@@ -6,6 +6,7 @@ import PaketTambahan from "../../assets/images/tambahan.jpg";
 import Parfum from "../../assets/images/parfum.png";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
+import { FaShoppingCart } from 'react-icons/fa';
 
 const FREE_DELIVERY_THRESHOLD = 7.0;
 const BASE_DISTANCE = 8.0;
@@ -75,6 +76,10 @@ function FirstPage() {
   const popupRef = useRef(null);
   const shoelacePopupRef = useRef(null);
   const paketPopupRef = useRef(null);
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+  const [showFullMessage, setShowFullMessage] = useState(false);
+  const [showCartPopup, setShowCartPopup] = useState(false);
+  const cartPopupRef = useRef(null);
 
   const variants = [
     {name: "Apple", isSoldOut: true},
@@ -118,6 +123,18 @@ function FirstPage() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    if (showConfirmationPopup) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showConfirmationPopup]);
 
   const handleAddToCart = () => {
     if (!selectedVariant) {
@@ -206,7 +223,28 @@ function FirstPage() {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
+  const truncateMessage = (message, wordCount = 5) => {
+    if (!message) return "";
+    const words = message.split(" ");
+    if (words.length <= wordCount) return message;
+    return words.slice(0, wordCount).join(" ") + "...";
+  };
+
+  const scrollToBottom = () => {
+    if (popupRef.current) {
+      popupRef.current.scrollTo({
+        top: popupRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const handleKirimPesanan = () => {
+    setShowConfirmationPopup(true);
+    setTimeout(scrollToBottom, 100);
+  };
+
+  const handleConfirmOrder = () => {
     const formData = JSON.parse(localStorage.getItem('form'));
     
     let cartDetails = "Saya tidak membeli produk tambahan";
@@ -233,7 +271,6 @@ function FirstPage() {
 *Pick-up:* ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
 *Waktu Pick-up:* ${formData.pickupTime ? dayjs(`2024-12-19T${formData.pickupTime}`).format("HH:mm") : "Belum dipilih"}
 
-
 *Pesan Khusus*: ${formData.specialMessage}
  
 *Detail Pembelian Produk:*
@@ -241,11 +278,32 @@ ${cartDetails}`;
 
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/6287795452475?text=${encodedMessage}`);
+    setShowConfirmationPopup(false);
+  };
+
+  const handleClickOutside = (e) => {
+    if (popupRef.current && !popupRef.current.contains(e.target)) {
+      setShowConfirmationPopup(false);
+      setShowFullMessage(false);
+    }
+  };
+
+  const handleUpdateQuantity = (index, newQuantity) => {
+    if (newQuantity < 1) return;
+    const newCart = [...cart];
+    newCart[index].quantity = newQuantity;
+    setCart(newCart);
+  };
+
+  const handleCartClickOutside = (e) => {
+    if (cartPopupRef.current && !cartPopupRef.current.contains(e.target)) {
+      setShowCartPopup(false);
+    }
   };
 
   return (
     <div className="w-full flex justify-center items-center">
-      <div className={`container w-full flex justify-center ${showPopup || showShoelacePopup || showPaketPopup ? "blur-background" : ""}`}>
+      <div className={`container w-full flex justify-center ${showPopup || showShoelacePopup || showPaketPopup || showCartPopup ? "blur-background" : ""}`}>
         <div className="flex flex-col items-center">
           <div style={{ zIndex: 1 }}>
             <div className="" style={{
@@ -935,74 +993,218 @@ ${cartDetails}`;
             </>
           )}
 
-          {/* Cart Section */}
-          {cart.length > 0 && (
-            <div style={{
-              width: "100%",
-              maxWidth: "500px",
-              margin: "20px 0",
-              padding: "15px",
-              backgroundColor: "#f5f5f5",
-              borderRadius: "20px"
-            }}>
-              <h3 style={{
-                fontFamily: "Montserrat, sans-serif",
-                marginBottom: "10px",
-                color: "black"
-              }}>Keranjang:</h3>
-              
-              {cart.map((item, index) => (
-                <div key={index} style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "10px",
-                  padding: "15px",
+          {/* Cart Popup */}
+          {showCartPopup && (
+            <>
+              <div 
+                className="blur-background"
+                onClick={handleCartClickOutside}
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  zIndex: 999
+                }}
+              ></div>
+              <div 
+                ref={cartPopupRef}
+                className="popup" 
+                style={{
+                  position: "fixed",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
                   backgroundColor: "white",
-                  borderRadius: "15px",
+                  padding: "20px",
+                  borderRadius: "10px",
+                  boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                  width: "90%",
+                  maxWidth: "400px",
+                  maxHeight: "80vh",
+                  overflowY: "auto",
+                  zIndex: 1000,
                   fontFamily: "Montserrat, sans-serif"
+                }}
+              >
+                <h3 style={{
+                  textAlign: "center",
+                  marginBottom: "20px",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  color: "black"
                 }}>
-                  <div style={{color: "black"}}>
-                    <span style={{fontWeight: "bold", fontSize: "15px"}}>
-                      {item.type === 'parfum' ? 'Parfum' : item.type === 'tali' ? 'Tali Sepatu' : 'Paket Tambahan'} {item.variant}
-                    </span>
-                    <br />
-                    <span style={{fontSize: "13px"}}>{item.quantity}x @ Rp{item.price}</span>
-                  </div>
-                  <button 
-                    onClick={() => handleRemoveFromCart(index)}
+                  Keranjang Belanja
+                </h3>
+
+                {/* Cart Items */}
+                <div style={{ marginBottom: "20px" }}>
+                  {cart.map((item, index) => (
+                    <div 
+                      key={index}
+                      style={{
+                        backgroundColor: "#f5f5f5",
+                        borderRadius: "10px",
+                        padding: "15px",
+                        marginBottom: "10px"
+                      }}
+                    >
+                      <div style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "10px"
+                      }}>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontWeight: "bold", color: "black" }}>
+                            {item.type === 'parfum' ? 'Parfum' : item.type === 'tali' ? 'Tali Sepatu' : 'Paket Tambahan'} {item.variant}
+                          </p>
+                          <p style={{ color: "#666", fontSize: "14px" }}>
+                            Rp{item.price} x {item.quantity} = Rp{item.price * item.quantity}
+                          </p>
+                        </div>
+                        <LazyMotion features={domAnimation}>
+                          <m.button
+                            onClick={() => handleRemoveFromCart(index)}
+                            whileTap={{ scale: 0.95 }}
+                            style={{
+                              backgroundColor: "#FF0000",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "100px",
+                              padding: "5px 10px",
+                              cursor: "pointer",
+                              fontSize: "12px"
+                            }}
+                          >
+                            Hapus
+                          </m.button>
+                        </LazyMotion>
+                      </div>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        justifyContent: "center"
+                      }}>
+                        <LazyMotion features={domAnimation}>
+                          <m.button
+                            onClick={() => handleUpdateQuantity(index, item.quantity - 1)}
+                            whileTap={{ scale: 0.95 }}
+                            style={{
+                              backgroundColor: "#3787F7",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "100%",
+                              width: "30px",
+                              height: "30px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              cursor: "pointer"
+                            }}
+                          >
+                            -
+                          </m.button>
+                        </LazyMotion>
+                        <span style={{ margin: "0 10px", fontWeight: "bold" }}>{item.quantity}</span>
+                        <LazyMotion features={domAnimation}>
+                          <m.button
+                            onClick={() => handleUpdateQuantity(index, item.quantity + 1)}
+                            whileTap={{ scale: 0.95 }}
+                            style={{
+                              backgroundColor: "#3787F7",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "100%",
+                              width: "30px",
+                              height: "30px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              cursor: "pointer"
+                            }}
+                          >
+                            +
+                          </m.button>
+                        </LazyMotion>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Total */}
+                <div style={{
+                  borderTop: "2px solid #ddd",
+                  paddingTop: "15px",
+                  marginBottom: "20px",
+                  textAlign: "right",
+                  fontWeight: "bold",
+                  color: "black"
+                }}>
+                  Total: Rp{calculateTotal()}
+                </div>
+
+                {/* Close Button */}
+                <LazyMotion features={domAnimation}>
+                  <m.button
+                    onClick={() => setShowCartPopup(false)}
+                    whileTap={{ scale: 0.95 }}
                     style={{
-                      backgroundColor: "#3787F7",
+                      backgroundColor: "#545454",
                       color: "white",
                       border: "none",
-                      borderRadius: "10px",
-                      padding: "5px 10px",
+                      borderRadius: "50px",
+                      padding: "12px",
+                      width: "100%",
                       cursor: "pointer",
-                      fontFamily: "Montserrat, sans-serif"
+                      fontSize: "14px"
                     }}
                   >
-                    Hapus
-                  </button>
-                </div>
-              ))}
-              
-              <div style={{
-                borderTop: "2px solid #ddd",
-                paddingTop: "10px",
-                textAlign: "right",
-                fontWeight: "bold",
-                color: "black",
-                fontFamily: "Montserrat, sans-serif"
-              }}>
-                Total: Rp{calculateTotal()}
+                    Tutup Keranjang
+                  </m.button>
+                </LazyMotion>
               </div>
-            </div>
+            </>
+          )}
+
+          {cart.length > 0 && !showPopup && !showShoelacePopup && !showPaketPopup && (
+            <LazyMotion features={domAnimation}>
+              <m.button
+                onClick={() => setShowCartPopup(true)}
+                whileTap={{ scale: 0.9 }}
+                transition={{ stiffness: 1000, damping: 5 }}
+                style={{
+                  marginTop: "10px",
+                  backgroundColor: "#FD6B04",
+                  color: "white",
+                  fontFamily: "Montserrat, sans-serif",
+                  border: "none",
+                  borderRadius: "50px",
+                  padding: "12px 20px",
+                  width: "100%",
+                  maxWidth: "290px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                  cursor: "pointer",
+                  fontSize: "14px"
+                }}
+              >
+                <FaShoppingCart size={18} />
+                Keranjang ({cart.length})
+              </m.button>
+            </LazyMotion>
           )}
 
           <div className="" style={{
             textAlign: "center",
             fontFamily: "Montserrat, sans-serif",
             fontSize: "14px",
+            marginTop: "15px",
             marginBottom: "15px",
             color: "#545454",
             alignItems: "center",
@@ -1045,6 +1247,151 @@ ${cartDetails}`;
                 Kirim pesanan pada Admin
               </m.button>
             </LazyMotion>
+          )}
+
+          {/* Konfirmasi Popup */}
+          {showConfirmationPopup && (
+            <>
+              <div 
+                className="blur-background"
+                onClick={handleClickOutside}
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  zIndex: 999
+                }}
+              ></div>
+              <div 
+                ref={popupRef}
+                className="popup" 
+                style={{
+                  position: "fixed",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  backgroundColor: "white",
+                  padding: "20px",
+                  borderRadius: "35px",
+                  boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                  width: "90%",
+                  maxWidth: "400px",
+                  maxHeight: "80vh",
+                  overflowY: "auto",
+                  zIndex: 1000,
+                  fontFamily: "Montserrat, sans-serif"
+                }}
+                onClick={scrollToBottom}
+              >
+                <h3 style={{
+                  textAlign: "center",
+                  marginBottom: "20px",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  color: "black"
+                }}>
+                  Konfirmasi Pesanan
+                </h3>
+
+                {/* Data Diri */}
+                {(() => {
+                  const formData = JSON.parse(localStorage.getItem('form'));
+                  const areaType = formData.selectedArea === 'kota' ? 'Kota' : 'Kabupaten';
+                  const fullAddress = `${formData.address}, Kec. ${formData.selectedDistrict}, ${areaType} Malang`;
+                  
+                  return (
+                    <div style={{marginBottom: "20px"}}>
+                      <h4 style={{fontWeight: "bold", marginBottom: "10px", color: "#3787F7"}}>Data Diri:</h4>
+                      <div style={{fontSize: "14px", color: "black"}}>
+                        <p><strong>Nama:</strong> {formData.name}</p>
+                        <p><strong>Alamat:</strong> {fullAddress}</p>
+                        <p><strong>Jumlah Item:</strong> {formData.itemCount}</p>
+                        <p><strong>Item:</strong> {formData.selectedItems?.join(", ")}</p>
+                        <p><strong>Treatment:</strong> {formData.selectedTreatments?.join(", ")}</p>
+                        <p><strong>Aroma:</strong> {formData.selectedAromas?.join(", ")}</p>
+                        <p><strong>Tanggal Pick-up:</strong> {new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}</p>
+                        <p><strong>Waktu Pick-up:</strong> {formData.pickupTime ? dayjs(`2024-12-19T${formData.pickupTime}`).format("HH:mm") : "Belum dipilih"}</p>
+                        {formData.specialMessage && (
+                          <p>
+                            <strong>Pesan Khusus:</strong>{" "}
+                            {showFullMessage ? (
+                              <span>{formData.specialMessage}</span>
+                            ) : (
+                              <span 
+                                onClick={(e) => {
+                                  e.stopPropagation(); // Mencegah event bubbling ke parent
+                                  setShowFullMessage(true);
+                                }}
+                                style={{ cursor: "pointer", color: "#3787F7" }}
+                              >
+                                {truncateMessage(formData.specialMessage)}
+                              </span>
+                            )}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Detail Produk */}
+                {cart.length > 0 && (
+                  <div style={{marginBottom: "20px"}}>
+                    <h4 style={{fontWeight: "bold", marginBottom: "10px", color: "#3787F7"}}>Detail Produk:</h4>
+                    <div style={{fontSize: "14px", color: "black"}}>
+                      {cart.map((item, index) => (
+                        <p key={index}>
+                          {item.quantity}x {item.type === 'parfum' ? 'Parfum' : item.type === 'tali' ? 'Tali Sepatu' : 'Paket Tambahan'} {item.variant} (Rp{item.price * item.quantity})
+                        </p>
+                      ))}
+                      <p style={{marginTop: "10px", fontWeight: "bold"}}>Total: Rp{calculateTotal()}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Buttons */}
+                <div style={{display: "flex", flexDirection: "column", gap: "10px"}}>
+                  <LazyMotion features={domAnimation}>
+                    <m.button
+                      onClick={handleConfirmOrder}
+                      whileTap={{ scale: 0.95 }}
+                      style={{
+                        backgroundColor: "#3787F7",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "50px",
+                        padding: "12px",
+                        cursor: "pointer",
+                        fontSize: "14px"
+                      }}
+                    >
+                      Sudah Benar
+                    </m.button>
+                    <m.button
+                      onClick={() => {
+                        setShowConfirmationPopup(false);
+                        setShowFullMessage(false); // Reset state saat popup ditutup
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      style={{
+                        backgroundColor: "#545454",
+                        color: "white", 
+                        border: "none",
+                        borderRadius: "50px",
+                        padding: "12px",
+                        cursor: "pointer",
+                        fontSize: "14px"
+                      }}
+                    >
+                      Ubah Pesanan
+                    </m.button>
+                  </LazyMotion>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>
