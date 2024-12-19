@@ -65,28 +65,31 @@ function App() {
   const pickupTimeRef = useRef(null);
 
   // Load initial form data from localStorage
-  const initialFormData = JSON.parse(localStorage.getItem("form")) || {
-    name: "",
-    address: "",
-    itemCount: "",
-    selectedItems: [],
-    selectedTreatments: [],
-    selectedAromas: [],
-    pickupDate: null,
-    pickupTime: null,
-    specialMessage: "",
-    location: null,
-    selectedArea: "kota",
-    selectedDistrict: "",
-  };
-
-  // Convert pickupDate dan pickupTime string ke dayjs object jika ada
-  if (initialFormData.pickupDate) {
-    initialFormData.pickupDate = dayjs(initialFormData.pickupDate);
-  }
-  if (initialFormData.pickupTime) {
-    initialFormData.pickupTime = dayjs(initialFormData.pickupTime);
-  }
+  const initialFormData = (() => {
+    const savedForm = localStorage.getItem("form");
+    if (savedForm) {
+      const parsed = JSON.parse(savedForm);
+      return {
+        ...parsed,
+        pickupDate: parsed.pickupDate ? dayjs(parsed.pickupDate) : null,
+        pickupTime: parsed.pickupTime || "" // Pastikan pickupTime ada
+      };
+    }
+    return {
+      name: "",
+      address: "",
+      itemCount: "",
+      selectedItems: [],
+      selectedTreatments: [],
+      selectedAromas: [],
+      pickupDate: null,
+      pickupTime: "",
+      specialMessage: "",
+      location: null,
+      selectedArea: "kota",
+      selectedDistrict: "",
+    };
+  })();
 
   const [formData, setFormData] = useState(initialFormData);
 
@@ -316,10 +319,20 @@ function App() {
   };
 
   // Modifikasi handleTimeChange untuk format rsuite TimePicker
-  const handleTimeChange = (time) => {
-    setFormData({
-      ...formData,
-      pickupTime: event.target.value, // direct value from input
+  const handleTimeChange = (event) => {
+    const newPickupTime = event.target.value;
+    
+    // Update formData dan localStorage
+    setFormData(prevFormData => {
+      const newFormData = {
+        ...prevFormData,
+        pickupTime: newPickupTime
+      };
+      
+      // Simpan ke localStorage
+      localStorage.setItem("form", JSON.stringify(newFormData));
+      
+      return newFormData;
     });
   };
 
@@ -460,6 +473,11 @@ function App() {
   const handleTimeChangeTime = (event) => {
     setTime(event.target.value);
   };
+
+  useEffect(() => {
+    console.log('Current formData:', formData);
+    console.log('localStorage form:', localStorage.getItem("form"));
+  }, [formData.pickupTime]);
 
   return (
     <div className="w-full flex justify-center items-center">
@@ -995,15 +1013,15 @@ function App() {
                     className="rounded-none rounded-s-lg bg-gray-50 border text-gray-900 leading-none focus:ring-blue-500 focus:border-blue-500 block flex-1 w-full text-sm border-gray-300 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     min="09:00"
                     max="18:00"
-                    value={formData.pickupTime} // directly use the value from formData
-                    onChange={handleTimeChange} // update the value when time is changed
+                    value={formData.pickupTime || ""}
+                    onChange={handleTimeChange}
                     required
                     style={{
                       padding: "10px",
                       height: "40px",
                       display: "flex",
-                      justifyContent: "center", // Center horizontally
-                      alignItems: "center", // Center vertically
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   />
 

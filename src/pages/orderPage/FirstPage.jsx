@@ -220,8 +220,7 @@ function FirstPage() {
     const areaType = formData.selectedArea === 'kota' ? 'Kota' : 'Kabupaten';
     const fullAddress = `${formData.address}, Kec. ${formData.selectedDistrict}, ${areaType} Malang`;
 
-    const message = `Halo Admin Katsikat!
-Ini Form Order saya yaa!
+    const message = `Ini Form Order saya yaa!
 
 *Nama:* ${formData.name}
 *Alamat:* ${fullAddress}
@@ -232,7 +231,8 @@ Ini Form Order saya yaa!
 *Aroma Yang Dipilih:* ${formData.selectedAromas?.join(", ") || "-"}
 
 *Pick-up:* ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
-*Waktu Pick-up:* ${formData.pickupTime ? dayjs(formData.pickupTime).format('hh:mm') + ' ' + (dayjs(formData.pickupTime).format('A') === 'AM' ? 'Pagi' : dayjs(formData.pickupTime).hour() < 15 ? 'Siang' : dayjs(formData.pickupTime).hour() < 18 ? 'Sore' : 'Malam') : '-'}
+*Waktu Pick-up:* ${formData.pickupTime ? dayjs(`2024-12-19T${formData.pickupTime}`).format("HH:mm") : "Belum dipilih"}
+
 
 *Pesan Khusus*: ${formData.specialMessage}
  
