@@ -2,10 +2,12 @@ import React, { useEffect, useState, useRef } from "react";
 import "./member.css";
 import { defineElement } from "lord-icon-element";
 import lottie from "lottie-web";
-import { DatePicker, TimePicker } from "antd";
+import { DatePicker } from "antd";
+import { TimePicker } from "rsuite";
 import dayjs from "dayjs";
 import { LazyMotion, m, domAnimation } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import "rsuite/dist/rsuite.min.css";
 
 const KOTA_MALANG = {
   districts: ["Blimbing", "Kedungkandang", "Klojen", "Lowokwaru", "Sukun"],
@@ -313,33 +315,17 @@ function App() {
     }
   };
 
-  // Perbaikan fungsi disabledTime untuk membatasi jam yang bisa dipilih
-  const disabledTime = () => ({
-    disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 8, 20, 21, 22, 23],
-    disabledMinutes: () => [],
-    disabledSeconds: () => [],
-  });
-
-  // Modifikasi handleTimeChange untuk memvalidasi waktu
+  // Modifikasi handleTimeChange untuk format rsuite TimePicker
   const handleTimeChange = (time) => {
-    if (time) {
-      const hour = time.hour();
-      if (hour >= 9 && hour < 20) {
-        const updatedFormData = { ...formData, pickupTime: time };
-        setFormData(updatedFormData);
-        saveFormDataToLocalStorage(updatedFormData);
-        if (errors.pickupTime) {
-          setErrors((prev) => ({
-            ...prev,
-            pickupTime: "",
-          }));
-        }
-      }
-    } else {
-      const updatedFormData = { ...formData, pickupTime: null };
-      setFormData(updatedFormData);
-      saveFormDataToLocalStorage(updatedFormData);
-    }
+    setFormData({
+      ...formData,
+      pickupTime: event.target.value, // direct value from input
+    });
+  };
+
+  // Fungsi untuk membatasi waktu yang bisa dipilih
+  const disabledHours = (hour) => {
+    return hour < 9 || hour >= 20;
   };
 
   const validateForm = () => {
@@ -469,6 +455,12 @@ function App() {
     });
   };
 
+  const [time, setTime] = useState("");
+
+  const handleTimeChangeTime = (event) => {
+    setTime(event.target.value);
+  };
+
   return (
     <div className="w-full flex justify-center items-center">
       <div className="container w-full flex justify-center">
@@ -481,7 +473,7 @@ function App() {
                 fontWeight: "bold",
                 fontFamily: "Montserrat, sans-serif",
                 fontSize: "26px",
-                marginTop: "15px",
+                marginTop: "0px",
                 color: "black",
               }}
             >
@@ -605,6 +597,8 @@ function App() {
                     className="input"
                     required
                     style={{
+                      maxWidth: "450px",
+                      width: "100%",
                       marginTop: "30px",
                       fontFamily: "Montserrat, sans-serif",
                       paddingLeft: "20px",
@@ -941,34 +935,39 @@ function App() {
             >
               Admin akan menghubungi anda untuk konfirmasi tanggal pick-up!
             </div>
+
             <div ref={pickupDateRef}>
-              <DatePicker
-                className="input"
-                style={{
-                  maxWidth: "450px",
-                  height: "40px",
-                  borderRadius: "20px",
-                  marginTop: "10px",
-                }}
-                onChange={handleDateChange}
-                value={formData.pickupDate ? dayjs(formData.pickupDate) : null}
-                readOnly
-                inputReadOnly={true} // Mencegah keyboard muncul di iPhone
-                editable={false} // Mencegah keyboard muncul di iPhone
-                placeholder="Pilih tanggal pick-up"
-              />
-              {errors.pickupDate && (
-                <div
+              <form>
+                <DatePicker
+                  className="input"
                   style={{
-                    color: "red",
-                    fontSize: "12px",
-                    paddingLeft: "20px",
+                    maxWidth: "290px",
+                    height: "40px",
+                    borderRadius: "10px",
                     marginTop: "10px",
                   }}
-                >
-                  {errors.pickupDate}
-                </div>
-              )}
+                  onChange={handleDateChange}
+                  value={
+                    formData.pickupDate ? dayjs(formData.pickupDate) : null
+                  }
+                  readOnly
+                  inputReadOnly={true} // Mencegah keyboard muncul di iPhone
+                  editable={false} // Mencegah keyboard muncul di iPhone
+                  placeholder="Pilih tanggal pick-up"
+                />
+                {errors.pickupDate && (
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "12px",
+                      paddingLeft: "20px",
+                      marginTop: "10px",
+                    }}
+                  >
+                    {errors.pickupDate}
+                  </div>
+                )}
+              </form>
             </div>
 
             <div
@@ -988,7 +987,7 @@ function App() {
             </div>
 
             <div style={{ padding: "0 20px" }}>
-              <form className="max-w-[8.5rem] mx-auto">
+              <form className="w-[290px] mx-auto">
                 <div className="flex">
                   <input
                     type="time"
@@ -996,10 +995,18 @@ function App() {
                     className="rounded-none rounded-s-lg bg-gray-50 border text-gray-900 leading-none focus:ring-blue-500 focus:border-blue-500 block flex-1 w-full text-sm border-gray-300 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     min="09:00"
                     max="18:00"
-                    value={formData.pickupTime}
-                    onChange={handleTimeChange}
+                    value={formData.pickupTime} // directly use the value from formData
+                    onChange={handleTimeChange} // update the value when time is changed
                     required
+                    style={{
+                      padding: "10px",
+                      height: "40px",
+                      display: "flex",
+                      justifyContent: "center", // Center horizontally
+                      alignItems: "center", // Center vertically
+                    }}
                   />
+
                   <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-s-0 border-s-0 border-gray-300 rounded-e-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
                     <svg
                       className="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -1017,13 +1024,6 @@ function App() {
                   </span>
                 </div>
               </form>
-              {errors.pickupTime && (
-                <div
-                  style={{ color: "red", fontSize: "12px", marginTop: "5px" }}
-                >
-                  {errors.pickupTime}
-                </div>
-              )}
             </div>
 
             <div className="inputs" style={{ marginTop: "20px" }}>
@@ -1106,7 +1106,7 @@ function App() {
               }}
             >
               Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 09.00 sampai
-              19.00. Silahkan pindah ke hari selanjutnya apabila sudah melewati
+              17.00. Silahkan pindah ke hari selanjutnya apabila sudah melewati
               batas jam PickUp. Terima Kasih
             </p>
             <LazyMotion features={domAnimation}>
