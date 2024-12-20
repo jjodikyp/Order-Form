@@ -1289,7 +1289,7 @@ function App() {
                 lineHeight: "1.5",
               }}
             >
-              Driver akan menjemput di titik lokasi yang anda bagikan. Pastikan berada di titik lokasi tersebut saat membagikan lokasi!
+              Driver akan menjemput di titik lokasi yang anda bagikan. Pastikan berada di titik penjemputan saat membagikan lokasi!
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <LazyMotion features={domAnimation}>
