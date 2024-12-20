@@ -1275,7 +1275,7 @@ function App() {
             style={{
               backgroundColor: "white",
               padding: "20px",
-              borderRadius: "10px",
+              borderRadius: "30px",
               maxWidth: "400px",
               width: "80%",
               textAlign: "center",
