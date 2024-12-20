@@ -258,7 +258,7 @@ function FirstPage() {
     const areaType = formData.selectedArea === 'kota' ? 'Kota' : 'Kabupaten';
     const fullAddress = `${formData.address}, Kec. ${formData.selectedDistrict}, ${areaType} Malang`;
 
-    const message = `Ini Form Order saya yaa!
+    let message = `Ini Form Order saya yaa!
 
 *Nama:* ${formData.name}
 *Alamat:* ${fullAddress}
@@ -269,12 +269,17 @@ function FirstPage() {
 *Aroma Yang Dipilih:* ${formData.selectedAromas?.join(", ") || "-"}
 
 *Pick-up:* ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
-*Waktu Pick-up:* ${formData.pickupTime ? dayjs(`2024-12-19T${formData.pickupTime}`).format("HH:mm") : "Belum dipilih"}
+*Waktu Pick-up:* ${formData.pickupTime ? dayjs(`2024-12-19T${formData.pickupTime}`).format("HH:mm") : "Belum dipilih"}`;
 
-*Pesan Khusus*: ${formData.specialMessage}
- 
-*Detail Pembelian Produk:*
-${cartDetails}`;
+    if (formData.knowFrom) {
+      message += `\n\n*Saya tahu Katsikat dari:* ${formData.knowFrom}`;
+    }
+
+    if (formData.specialMessage) {
+      message += `\n*Pesan Khusus*: ${formData.specialMessage}`;
+    }
+
+    message += `\n\n*Detail Pembelian Produk:*\n${cartDetails}`;
 
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/6287795452475?text=${encodedMessage}`);

@@ -73,7 +73,8 @@ function App() {
       return {
         ...parsed,
         pickupDate: parsed.pickupDate ? dayjs(parsed.pickupDate) : null,
-        pickupTime: parsed.pickupTime || "", // Pastikan pickupTime ada
+        pickupTime: parsed.pickupTime || "",
+        knowFrom: parsed.knowFrom || "",
       };
     }
     return {
@@ -89,6 +90,7 @@ function App() {
       location: null,
       selectedArea: "kota",
       selectedDistrict: "",
+      knowFrom: "",
     };
   })();
 
@@ -100,9 +102,11 @@ function App() {
   const initialItems = JSON.parse(localStorage.getItem("items")) || {
     Sepatu: false,
     Sandal: false,
-    SepatuSandal: false,
-    HeelsFlatshoes: false,
+    SandalSepatu: false,
+    Heels: false,
+    FlatShoes: false,
     Tas: false,
+    Koper: false,
     Helm: false,
     Topi: false,
     Stroller: false,
@@ -1088,7 +1092,53 @@ function App() {
               </form>
             </div>
 
-            <div className="inputs" style={{ marginTop: "20px" }}>
+            <div>
+              <div
+                className="text"
+                style={{
+                  textAlign: "left",
+                fontWeight: "bold",
+                fontFamily: "Montserrat, sans-serif",
+                fontSize: "15px",
+                marginTop: "25px",
+                color: "black",
+                paddingLeft: "20px",
+                }}
+              >
+                Dari mana kamu tahu Katsikat?
+              </div>
+
+              <div style={{ paddingBottom: "20px" }}>
+                <select
+                  name="knowFrom"
+                  value={formData.knowFrom}
+                  onChange={handleInputChange}
+                  className="input"
+                  style={{
+                    marginTop: "10px",
+                    fontFamily: "Montserrat, sans-serif",
+                    paddingLeft: "20px",
+                    textIndent: "20px",
+                    color: "#545454",
+                    appearance: "none",
+                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "right 20px center",
+                    backgroundSize: "1em",
+                  }}
+                >
+                  <option value="" disabled>
+                    Pilih sumber informasi
+                  </option>
+                  <option value="Instagram">Instagram</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="Google">Google</option>
+                  <option value="Tiktok">Tiktok</option>
+                  <option value="Teman">Teman</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </div>
+
               <div>
                 <textarea
                   className="inputPesan"
@@ -1106,6 +1156,7 @@ function App() {
                   textAlign: "center",
                   fontFamily: "Montserrat, sans-serif",
                   fontSize: "14px",
+                  marginTop: "25px",
                   marginBottom: "15px",
                   color: "#545454",
                   maxWidth: "350px",

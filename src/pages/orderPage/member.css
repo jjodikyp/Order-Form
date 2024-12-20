@@ -163,6 +163,7 @@
     background-color: #F3F4F6;
     padding-right: 25px;
     padding-left: 10px;
+    width: 450px;
 
     @media screen and (max-width: 420px){
         width: 320px;
@@ -889,4 +890,121 @@
     border-color: red !important;
     box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
   }
+  
+/* Breakpoints utama untuk responsivitas */
+@media screen and (max-width: 320px) {
+  .input, .inputPesan, .katalog, .popup, .daftar, .kembali, .drop, .dropQris, .dropCash, .dropQrisContainer, .slider, .display {
+    width: 280px;
+  }
+
+  .input input, .inputS {
+    width: 280px;
+  }
+
+  .buat, .buatS, .buatStatus {
+    width: 260px;
+  }
+}
+
+@media screen and (min-width: 321px) and (max-width: 420px) {
+  .input, .inputPesan, .katalog, .popup, .daftar, .kembali, .drop, .dropQris, .dropCash, .dropQrisContainer, .slider, .display {
+    width: 320px;
+  }
+
+  .input input, .inputS {
+    width: 320px;
+  }
+
+  .buat, .buatS, .buatStatus {
+    width: 300px;
+  }
+
+  .previewImage {
+    width: 320px;
+  }
+
+  .text {
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 22px;
+  }
+
+  .textBayar, .textDrop {
+    font-size: 13px;
+  }
+
+  .textDropBCA {
+    font-size: 18px;
+  }
+}
+
+@media screen and (min-width: 421px) and (max-width: 768px) {
+  .input, .inputPesan, .katalog, .popup, .daftar, .kembali, .drop, .dropQris, .dropCash, .dropQrisContainer, .slider, .display {
+    width: 380px;
+  }
+
+  .input input, .inputS {
+    width: 380px;
+  }
+
+  .buat, .buatS, .buatStatus {
+    width: 360px;
+  }
+
+  .text {
+    font-size: 24px;
+  }
+
+  .textBayar, .textDrop {
+    font-size: 14px;
+  }
+}
+
+/* Tablet dan Desktop kecil */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .input, .inputPesan, .katalog, .popup, .daftar, .kembali, .drop, .dropQris, .dropCash, .dropQrisContainer, .slider, .display {
+    width: 450px;
+  }
+
+  .input input, .inputS {
+    width: 400px;
+  }
+}
+
+/* Styling untuk TimePicker responsif */
+.time-picker-container {
+  width: 100%;
+  padding: 0 20px;
+  margin-top: 10px;
+}
+
+@media screen and (max-width: 420px) {
+  .time-picker-container {
+    width: 320px;
+  }
+
+  .custom-time-picker {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 421px) and (max-width: 768px) {
+  .time-picker-container {
+    width: 380px;
+  }
+}
+
+/* Penyesuaian untuk form dan container */
+.form, .formUpload {
+  width: 100%;
+  max-width: 450px;
+  margin: auto;
+  padding: 0 20px;
+}
+
+.inputs, .inputsS, .inputEdit, .inputCek {
+  width: 100%;
+  max-width: 450px;
+  margin: auto;
+}
   
