@@ -73,7 +73,7 @@ function App() {
       return {
         ...parsed,
         pickupDate: parsed.pickupDate ? dayjs(parsed.pickupDate) : null,
-        pickupTime: parsed.pickupTime || "" // Pastikan pickupTime ada
+        pickupTime: parsed.pickupTime || "", // Pastikan pickupTime ada
       };
     }
     return {
@@ -148,6 +148,9 @@ function App() {
 
   // Tambahkan state untuk mengontrol popup time picker
   const [showTimePickerPopup, setShowTimePickerPopup] = useState(false);
+
+  // Tambahkan state untuk popup konfirmasi lokasi
+  const [showLocationConfirmPopup, setShowLocationConfirmPopup] = useState(false);
 
   useEffect(() => {
     defineElement(lottie.loadAnimation);
@@ -230,7 +233,14 @@ function App() {
     }
   };
 
-  const handleGetLocation = () => {
+  // Modifikasi handleGetLocation untuk menampilkan popup dulu
+  const handleGetLocationClick = () => {
+    setShowLocationConfirmPopup(true);
+  };
+
+  // Fungsi untuk membagikan lokasi setelah konfirmasi
+  const handleConfirmLocation = () => {
+    setShowLocationConfirmPopup(false);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -265,6 +275,11 @@ function App() {
     } else {
       alert("Browser anda tidak mendukung geolokasi.");
     }
+  };
+
+  // Fungsi untuk menutup popup jika user tidak di lokasi
+  const handleCancelLocation = () => {
+    setShowLocationConfirmPopup(false);
   };
 
   const handleCheckboxChange = (category, itemName) => {
@@ -325,17 +340,17 @@ function App() {
   // Modifikasi handleTimeChange untuk format rsuite TimePicker
   const handleTimeChange = (event) => {
     const newPickupTime = event.target.value;
-    
+
     // Update formData dan localStorage
-    setFormData(prevFormData => {
+    setFormData((prevFormData) => {
       const newFormData = {
         ...prevFormData,
-        pickupTime: newPickupTime
+        pickupTime: newPickupTime,
       };
-      
+
       // Simpan ke localStorage
       localStorage.setItem("form", JSON.stringify(newFormData));
-      
+
       return newFormData;
     });
   };
@@ -479,8 +494,8 @@ function App() {
   };
 
   useEffect(() => {
-    console.log('Current formData:', formData);
-    console.log('localStorage form:', localStorage.getItem("form"));
+    console.log("Current formData:", formData);
+    console.log("localStorage form:", localStorage.getItem("form"));
   }, [formData.pickupTime]);
 
   // Tambahkan handler untuk membuka time picker
@@ -688,12 +703,12 @@ function App() {
                 <m.button
                   type="button"
                   className="daftar"
-                  onClick={handleGetLocation}
+                  onClick={handleGetLocationClick}
                   style={{ marginBottom: "0px", backgroundColor: "#3787F7" }}
                   transition={{ stiffness: 1000, damping: 5 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  Bagikan Lokasi (Google Maps)
+                  Bagikan Lokasi Penjemputan
                 </m.button>
               </LazyMotion>
 
@@ -710,8 +725,7 @@ function App() {
                   paddingRight: "25px",
                 }}
               >
-                PickUp dan Delivery diatas 7km akan dikenakan tarif ongkos
-                kirim!
+                Gratis Ongkir hanya berlaku untuk radius 7km dari lokasi Outlet Katsikat!
               </div>
             </div>
 
@@ -962,13 +976,13 @@ function App() {
               style={{
                 textAlign: "left",
                 fontFamily: "Montserrat, sans-serif",
-                fontSize: "14px",
+                fontSize: "12px",
                 color: "#545454",
                 maxWidth: "350px",
                 paddingLeft: "20px",
               }}
             >
-              Admin akan menghubungi anda untuk konfirmasi tanggal pick-up!
+              Khusus hari Minggu, Outlet hanya akan buka sampai jam 17.00!
             </div>
 
             <div ref={pickupDateRef}>
@@ -1013,12 +1027,24 @@ function App() {
                 fontFamily: "Montserrat, sans-serif",
                 fontSize: "15px",
                 marginTop: "25px",
-                marginBottom: "10px",
                 color: "black",
                 paddingLeft: "20px",
               }}
             >
               Request Jam Pick-Up (Optional)
+            </div>
+            <div
+              className="text"
+              style={{
+                textAlign: "left",
+                fontFamily: "Montserrat, sans-serif",
+                fontSize: "12px",
+                color: "#545454",
+                maxWidth: "350px",
+                paddingLeft: "20px",
+              }}
+            >
+              Jam Pick-Up hanya berlaku mulai jam 09.00 sampai 19.00! 
             </div>
 
             <div ref={timePickerRef} style={{ padding: "0 20px" }}>
@@ -1039,10 +1065,11 @@ function App() {
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
+                      marginTop: "10px",
                     }}
                   />
 
-                  <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-s-0 border-s-0 border-gray-300 rounded-e-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+                  <span className="mt-[10px] inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-s-0 border-s-0 border-gray-300 rounded-e-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
                     <svg
                       className="w-4 h-4 text-gray-500 dark:text-gray-400"
                       aria-hidden="true"
@@ -1224,6 +1251,84 @@ function App() {
                 Baik, Saya Paham
               </m.button>
             </LazyMotion>
+          </div>
+        </div>
+      )}
+
+      {/* Popup konfirmasi lokasi */}
+      {showLocationConfirmPopup && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "10px",
+              maxWidth: "400px",
+              width: "80%",
+              textAlign: "center",
+              fontFamily: "Montserrat, sans-serif",
+            }}
+          >
+            <p
+              style={{
+                marginBottom: "20px",
+                fontSize: "14px",
+                lineHeight: "1.5",
+              }}
+            >
+              Driver akan menjemput di titik lokasi yang anda bagikan. Pastikan berada di titik lokasi tersebut saat membagikan lokasi!
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <LazyMotion features={domAnimation}>
+                <m.button
+                  onClick={handleConfirmLocation}
+                  style={{
+                    backgroundColor: "#3787F7",
+                    color: "white",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: "20px",
+                    cursor: "pointer",
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: "14px",
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ stiffness: 1000, damping: 5 }}
+                >
+                  Bagikan Lokasi Saya
+                </m.button>
+                <m.button
+                  onClick={handleCancelLocation}
+                  style={{
+                    backgroundColor: "#6B7280",
+                    color: "white",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: "20px",
+                    cursor: "pointer",
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: "14px",
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ stiffness: 1000, damping: 5 }}
+                >
+                  Saya Tidak di Lokasi
+                </m.button>
+              </LazyMotion>
+            </div>
           </div>
         </div>
       )}
