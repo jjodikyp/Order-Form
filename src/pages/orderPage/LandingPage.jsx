@@ -1308,7 +1308,7 @@ function App() {
                   whileTap={{ scale: 0.9 }}
                   transition={{ stiffness: 1000, damping: 5 }}
                 >
-                  Bagikan Lokasi Saya
+                  Bagikan Posisi Saat Ini
                 </m.button>
                 <m.button
                   onClick={handleCancelLocation}
