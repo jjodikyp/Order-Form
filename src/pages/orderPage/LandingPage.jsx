@@ -64,6 +64,7 @@ function App() {
   const pickupDateRef = useRef(null);
   const pickupTimeRef = useRef(null);
   const timePickerRef = useRef(null);
+  const estimationsRef = useRef(null);
 
   // Load initial form data from localStorage
   const initialFormData = (() => {
@@ -75,11 +76,14 @@ function App() {
         pickupDate: parsed.pickupDate ? dayjs(parsed.pickupDate) : null,
         pickupTime: parsed.pickupTime || "",
         knowFrom: parsed.knowFrom || "",
+        pickupPoint: parsed.pickupPoint || "",
+        selectedEstimation: parsed.selectedEstimation || "",
       };
     }
     return {
       name: "",
       address: "",
+      pickupPoint: "",
       itemCount: "",
       selectedItems: [],
       selectedTreatments: [],
@@ -91,6 +95,7 @@ function App() {
       selectedArea: "kota",
       selectedDistrict: "",
       knowFrom: "",
+      selectedEstimation: "",
     };
   })();
 
@@ -155,6 +160,13 @@ function App() {
 
   // Tambahkan state untuk popup konfirmasi lokasi
   const [showLocationConfirmPopup, setShowLocationConfirmPopup] = useState(false);
+
+  // Tambahkan di bagian state awal
+  const [estimations, setEstimations] = useState({
+    "Normal (3-4 hari)": false,
+    "Next Day (1-2 hari)": false,
+    "Same Day (8 jam)": false
+  });
 
   useEffect(() => {
     defineElement(lottie.loadAnimation);
@@ -419,6 +431,12 @@ function App() {
       if (!firstError) firstError = pickupDateRef;
     }
 
+    const selectedEstimation = Object.keys(estimations).find(key => estimations[key]);
+    if (!selectedEstimation) {
+      newErrors.estimations = "Pilih estimasi pengerjaan!";
+      if (!firstError) firstError = estimationsRef;
+    }
+
     setErrors(newErrors);
 
     // Scroll to first error if exists
@@ -515,6 +533,49 @@ function App() {
     sessionStorage.setItem("timePickerPopupShown", "true");
   };
 
+  // Modifikasi handler untuk estimasi
+  const handleEstimationChange = (estimationType) => {
+    const restrictedItems = ["Koper", "Stroller", "Helm"];
+    const selectedItems = Object.keys(items).filter(item => items[item]);
+    const hasOnlyRestrictedItems = selectedItems.length > 0 && 
+      selectedItems.every(item => restrictedItems.includes(item));
+
+    if (estimationType === "Same Day (8 jam)" && hasOnlyRestrictedItems) {
+      alert("Maaf, estimasi Same Day tidak tersedia jika hanya memilih Koper, Stroller, atau Helm");
+      return;
+    }
+
+    // Update estimations untuk memungkinkan multiple selection
+    setEstimations(prev => {
+      const newEstimations = {
+        ...prev,
+        [estimationType]: !prev[estimationType]
+      };
+
+      // Update formData
+      setFormData(prevForm => {
+        const selectedEstimations = Object.keys(newEstimations)
+          .filter(key => newEstimations[key]);
+        
+        const newFormData = {
+          ...prevForm,
+          selectedEstimation: selectedEstimations.join(", ")
+        };
+        localStorage.setItem("form", JSON.stringify(newFormData));
+        return newFormData;
+      });
+
+      return newEstimations;
+    });
+
+    if (errors.estimations) {
+      setErrors(prev => ({
+        ...prev,
+        estimations: ""
+      }));
+    }
+  };
+
   return (
     <div className="w-full flex justify-center items-center">
       <div className="container w-full flex justify-center">
@@ -572,6 +633,31 @@ function App() {
                     {errors.address}
                   </div>
                 )}
+              </div>
+
+              <div className="input">
+                <input
+                  type="text"
+                  name="pickupPoint"
+                  placeholder="Masukan patokan titik jemput!"
+                  value={formData.pickupPoint}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div
+                className="text"
+                style={{
+                  textAlign: "center",
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "14px",
+                  color: "#3787F7",
+                  maxWidth: "350px",
+                  paddingLeft: "25px",
+                  paddingRight: "25px",
+                }}
+              >
+                Masukan nomor rumah/warna rumah/patokan lainnya untuk memudahkan kurir menemukan lokasi!
               </div>
 
               <div className="input-group">
@@ -888,6 +974,74 @@ function App() {
                 adalah Topi/Helm/Tas/Stroller
               </span>
             </div>
+
+            <div
+              className="text"
+              style={{
+                textAlign: "left",
+                fontWeight: "bold",
+                fontFamily: "Montserrat, sans-serif",
+                fontSize: "15px",
+                marginTop: "25px",
+                color: "black",
+                paddingLeft: "20px",
+              }}
+            >
+              Estimasi Pengerjaan
+            </div>
+
+            <div
+              className="checkboxes"
+              style={{
+                display: "flex",
+                gap: "10px",
+                flexWrap: "wrap",
+                maxWidth: "400px",
+                padding: "10px",
+                paddingLeft: "20px",
+              }}
+              ref={estimationsRef}
+            >
+              {Object.keys(estimations).map((estimationType) => {
+                const restrictedItems = ["Koper", "Stroller", "Helm"];
+                const selectedItems = Object.keys(items).filter(item => items[item]);
+                const hasOnlyRestrictedItems = selectedItems.length > 0 && 
+                  selectedItems.every(item => restrictedItems.includes(item));
+                
+                const isDisabled = estimationType === "Same Day (8 jam)" && hasOnlyRestrictedItems;
+
+                return (
+                  <label
+                    key={estimationType}
+                    style={{
+                      color: isDisabled ? "#999" : "black",
+                      fontFamily: "Montserrat, sans-serif",
+                      marginBottom: "5px",
+                      display: "flex",
+                      alignItems: "center",
+                      opacity: isDisabled ? 0.5 : 1,
+                      cursor: isDisabled ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={estimations[estimationType]}
+                      onChange={() => handleEstimationChange(estimationType)}
+                      style={{ marginRight: "5px" }}
+                      disabled={isDisabled}
+                    />
+                    {estimationType}
+                  </label>
+                );
+              })}
+            </div>
+            {errors.estimations && (
+              <div
+                style={{ color: "red", fontSize: "12px", paddingLeft: "20px" }}
+              >
+                {errors.estimations}
+              </div>
+            )}
 
             <div
               className="text"

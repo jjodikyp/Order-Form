@@ -262,10 +262,13 @@ function FirstPage() {
 
 *Nama:* ${formData.name}
 *Alamat:* ${fullAddress}
+*Patokan:* ${formData.pickupPoint || "-"}
 *Link Lokasi:* ${formData.locationLink || "-"}
+
 *Jumlah Item:* ${formData.itemCount || "-"}
 *Item Yang Dipilih:* ${formData.selectedItems?.join(", ") || "-"}
 *Treatment Yang Dipilih:* ${formData.selectedTreatments?.join(", ") || "-"}
+*Estimasi Pengerjaan:* ${formData.selectedEstimation || "-"}
 *Aroma Yang Dipilih:* ${formData.selectedAromas?.join(", ") || "-"}
 
 *Pick-up:* ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
@@ -1313,9 +1316,12 @@ function FirstPage() {
                       <div style={{fontSize: "14px", color: "black"}}>
                         <p><strong>Nama:</strong> {formData.name}</p>
                         <p><strong>Alamat:</strong> {fullAddress}</p>
-                        <p><strong>Jumlah Item:</strong> {formData.itemCount}</p>
+                        <p><strong>Patokan:</strong> {formData.pickupPoint || "-"}</p>
+                        <p><strong>Link Lokasi:</strong> {formData.locationLink || "-"}</p>
+                        <p><strong>Jumlah Item:</strong> {formData.itemCount || "-"}</p>
                         <p><strong>Item:</strong> {formData.selectedItems?.join(", ")}</p>
                         <p><strong>Treatment:</strong> {formData.selectedTreatments?.join(", ")}</p>
+                        <p><strong>Estimasi Pengerjaan:</strong> {formData.selectedEstimation || "-"}</p>
                         <p><strong>Aroma:</strong> {formData.selectedAromas?.join(", ")}</p>
                         <p><strong>Tanggal Pick-up:</strong> {new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}</p>
                         <p><strong>Waktu Pick-up:</strong> {formData.pickupTime ? dayjs(`2024-12-19T${formData.pickupTime}`).format("HH:mm") : "Belum dipilih"}</p>
