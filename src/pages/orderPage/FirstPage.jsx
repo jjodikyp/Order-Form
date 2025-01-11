@@ -4,7 +4,7 @@ import { LazyMotion, m, domAnimation } from "framer-motion";
 import TaliSepatu from "../../assets/images/talisepatu.png";
 import PaketTambahan from "../../assets/images/tambahan.jpg";
 import Parfum from "../../assets/images/parfum.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { FaShoppingCart } from 'react-icons/fa';
 
@@ -80,6 +80,7 @@ function FirstPage() {
   const [showFullMessage, setShowFullMessage] = useState(false);
   const [showCartPopup, setShowCartPopup] = useState(false);
   const cartPopupRef = useRef(null);
+  const navigate = useNavigate();
 
   const variants = [
     {name: "Apple", isSoldOut: true},
@@ -268,31 +269,31 @@ function FirstPage() {
       const phoneNumber = "6287795452475";
 
       // Format alamat
-      const areaType = formData.selectedArea === 'kota' ? 'Kota' : 'Kabupaten';
-      const fullAddress = `${formData.address}, Kec. ${formData.selectedDistrict}, ${areaType} Malang`;
+      const areaType = formData?.selectedArea === 'kota' ? 'Kota' : 'Kabupaten';
+      const fullAddress = `${formData?.address}, Kec. ${formData?.selectedDistrict}, ${areaType} Malang`;
 
       // Format pesan
       let message = `Ini Form Order saya yaa!
 
-*Nama:* ${formData.name || '-'}
+*Nama:* ${formData?.name || '-'}
 *Alamat:* ${fullAddress}
-*Patokan:* ${formData.pickupPoint || "-"}
-*Link Lokasi:* ${formData.locationLink || "-"}
+*Patokan:* ${formData?.pickupPoint || "-"}
+*Link Lokasi:* ${formData?.locationLink || "-"}
 
-*Jumlah Item:* ${formData.itemCount || "-"}
-*Item Yang Dipilih:* ${formData.selectedItems?.join(", ") || "-"}
-*Treatment Yang Dipilih:* ${formData.selectedTreatments?.join(", ") || "-"}
-*Estimasi Pengerjaan:* ${formData.selectedEstimation || "-"}
-*Aroma Yang Dipilih:* ${formData.selectedAromas?.join(", ") || "-"}
+*Jumlah Item:* ${formData?.itemCount || "-"}
+*Item Yang Dipilih:* ${formData?.selectedItems?.join(", ") || "-"}
+*Treatment Yang Dipilih:* ${formData?.selectedTreatments?.join(", ") || "-"}
+*Estimasi Pengerjaan:* ${formData?.selectedEstimation || "-"}
+*Aroma Yang Dipilih:* ${formData?.selectedAromas?.join(", ") || "-"}
 
-*Pick-up:* ${formData.pickupDate ? dayjs(formData.pickupDate).format("dddd, DD MMMM YYYY") : "-"}
-*Waktu Pick-up:* ${formData.pickupTime ? dayjs(`2024-01-01T${formData.pickupTime}`).format("HH:mm") : "Belum dipilih"}
+*Pick-up:* ${formData?.pickupDate ? dayjs(formData?.pickupDate).format("dddd, DD MMMM YYYY") : "-"}
+*Waktu Pick-up:* ${formData?.pickupTime ? dayjs(`2024-01-01T${formData?.pickupTime}`).format("HH:mm") : "Belum dipilih"}
 
 *Detail Produk Tambahan:*
 ${cartDetails}
 
-${formData.specialMessage ? `*Pesan Khusus:* ${formData.specialMessage}\n` : ""}
-${formData.knowFrom ? `*Saya tahu Katsikat dari:* ${formData.knowFrom}` : ""}`;
+${formData?.specialMessage ? `*Pesan Khusus:* ${formData?.specialMessage}\n` : ""}
+  ${formData?.knowFrom ? `*Saya tahu Katsikat dari:* ${formData?.knowFrom}` : ""}`;
 
       // Encode pesan untuk URL
       const encodedMessage = encodeURIComponent(message);
