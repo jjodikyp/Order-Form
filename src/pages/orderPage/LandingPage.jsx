@@ -105,6 +105,7 @@ function App() {
 
   // Load initial items state from localStorage
   const initialItems = JSON.parse(localStorage.getItem("items")) || {
+    "PROMO 2 SEPATU": false,
     Sepatu: false,
     Sandal: false,
     SandalSepatu: false,
@@ -165,7 +166,8 @@ function App() {
   const [estimations, setEstimations] = useState({
     "Normal (3-4 hari)": false,
     "Next Day (1-2 hari)": false,
-    "Same Day (8 jam)": false
+    "Same Day (8 jam)": false,
+    "Estimasi Promo (4-5 hari)": false
   });
 
   useEffect(() => {
@@ -305,6 +307,28 @@ function App() {
     switch (category) {
       case "items":
         updatedItems = { ...items, [itemName]: !items[itemName] };
+        
+        if (itemName === "PROMO 2 SEPATU") {
+          if (!items[itemName]) {
+            setTreatments({
+              ...treatments,
+              DeepClean: true,
+              OutsideClean: false,
+              UnYellowing: false,
+              Repaint: false,
+              Reglue: false,
+              Filler: false,
+            });
+            
+            setEstimations({
+              "Normal (3-4 hari)": false,
+              "Next Day (1-2 hari)": false,
+              "Same Day (8 jam)": false,
+              "Estimasi Promo (4-5 hari)": true
+            });
+          }
+        }
+        
         setItems(updatedItems);
         updatedFormData = {
           ...formData,
