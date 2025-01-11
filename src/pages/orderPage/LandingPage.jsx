@@ -88,7 +88,7 @@ const LATEST_ESTIMATIONS_STRUCTURE = {
   "Normal (3-4 hari)": false,
   "Next Day (1-2 hari)": false,
   "Same Day (8 jam)": false,
-  "Estimasi Promo (4-5 hari)": false
+  "Estimasi Promo (4-5 hari)": false,
 };
 
 // Fungsi helper untuk update struktur
@@ -378,7 +378,7 @@ function App() {
               "Same Day (8 jam)": false,
               "Estimasi Promo (4-5 hari)": true
             });
-            
+
           }
         }
         

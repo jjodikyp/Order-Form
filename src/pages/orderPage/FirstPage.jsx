@@ -245,25 +245,36 @@ function FirstPage() {
   };
 
   const handleConfirmOrder = () => {
-    const formData = JSON.parse(localStorage.getItem('form'));
-    
-    const selectedEstimation = Object.entries(estimations)
-      .find(([_, isSelected]) => isSelected)?.[0];
+    try {
+      // Ambil data form dari localStorage
+      const formData = JSON.parse(localStorage.getItem('form'));
+      if (!formData) {
+        throw new Error('Form data tidak ditemukan');
+      }
 
-    let cartDetails = "Saya tidak membeli produk tambahan";
-    if (cart.length > 0) {
-      cartDetails = cart.map(item => 
-        `${item.quantity}x ${item.type === 'parfum' ? 'Parfum' : item.type === 'tali' ? 'Tali Sepatu' : 'Paket Tambahan'} ${item.variant} (Rp${item.price * item.quantity})`
-      ).join("\n");
-      cartDetails += `\n*Total:* Rp${calculateTotal()}`;
-    }
+      // Ambil data cart dari localStorage jika ada
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    const areaType = formData.selectedArea === 'kota' ? 'Kota' : 'Kabupaten';
-    const fullAddress = `${formData.address}, Kec. ${formData.selectedDistrict}, ${areaType} Malang`;
+      // Format cart details
+      let cartDetails = "Saya tidak membeli produk tambahan";
+      if (cart.length > 0) {
+        cartDetails = cart.map(item => 
+          `${item.quantity}x ${item.type === 'parfum' ? 'Parfum' : item.type === 'tali' ? 'Tali Sepatu' : 'Paket Tambahan'} ${item.variant} (Rp${item.price * item.quantity})`
+        ).join("\n");
+        cartDetails += `\n*Total:* Rp${calculateTotal()}`;
+      }
 
-    let message = `Ini Form Order saya yaa!
+      // Nomor WhatsApp yang dituju
+      const phoneNumber = "6287795452475";
 
-*Nama:* ${formData.name}
+      // Format alamat
+      const areaType = formData.selectedArea === 'kota' ? 'Kota' : 'Kabupaten';
+      const fullAddress = `${formData.address}, Kec. ${formData.selectedDistrict}, ${areaType} Malang`;
+
+      // Format pesan
+      let message = `Ini Form Order saya yaa!
+
+*Nama:* ${formData.name || '-'}
 *Alamat:* ${fullAddress}
 *Patokan:* ${formData.pickupPoint || "-"}
 *Link Lokasi:* ${formData.locationLink || "-"}
@@ -274,22 +285,38 @@ function FirstPage() {
 *Estimasi Pengerjaan:* ${formData.selectedEstimation || "-"}
 *Aroma Yang Dipilih:* ${formData.selectedAromas?.join(", ") || "-"}
 
-*Pick-up:* ${new Date(formData.pickupDate).toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
-*Waktu Pick-up:* ${formData.pickupTime ? dayjs(`2024-12-19T${formData.pickupTime}`).format("HH:mm") : "Belum dipilih"}`;
+*Pick-up:* ${formData.pickupDate ? dayjs(formData.pickupDate).format("dddd, DD MMMM YYYY") : "-"}
+*Waktu Pick-up:* ${formData.pickupTime ? dayjs(`2024-01-01T${formData.pickupTime}`).format("HH:mm") : "Belum dipilih"}
 
-    if (formData.knowFrom) {
-      message += `\n\n*Saya tahu Katsikat dari:* ${formData.knowFrom}`;
+*Detail Produk Tambahan:*
+${cartDetails}
+
+${formData.specialMessage ? `*Pesan Khusus:* ${formData.specialMessage}\n` : ""}
+${formData.knowFrom ? `*Saya tahu Katsikat dari:* ${formData.knowFrom}` : ""}`;
+
+      // Encode pesan untuk URL
+      const encodedMessage = encodeURIComponent(message);
+      
+      // Buat URL WhatsApp
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+      
+      // Buka WhatsApp di tab baru
+      window.open(whatsappUrl, '_blank');
+
+      // Clear form data setelah berhasil
+      localStorage.removeItem('form');
+      localStorage.removeItem('selectedItems');
+      localStorage.removeItem('selectedTreatments');
+      localStorage.removeItem('selectedAromas');
+      localStorage.removeItem('cart');
+      
+      // Redirect ke halaman awal
+      navigate('/');
+
+    } catch (error) {
+      console.error('Error in handleConfirmOrder:', error);
+      alert('Terjadi kesalahan saat mengirim pesanan. Silakan coba lagi.');
     }
-
-    if (formData.specialMessage) {
-      message += `\n*Pesan Khusus*: ${formData.specialMessage}`;
-    }
-
-    message += `\n\n*Detail Pembelian Produk:*\n${cartDetails}`;
-
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/6287795452475?text=${encodedMessage}`);
-    setShowConfirmationPopup(false);
   };
 
   const handleClickOutside = (e) => {
