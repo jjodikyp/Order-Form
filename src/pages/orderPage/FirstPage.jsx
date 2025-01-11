@@ -247,6 +247,9 @@ function FirstPage() {
   const handleConfirmOrder = () => {
     const formData = JSON.parse(localStorage.getItem('form'));
     
+    const selectedEstimation = Object.entries(estimations)
+      .find(([_, isSelected]) => isSelected)?.[0];
+
     let cartDetails = "Saya tidak membeli produk tambahan";
     if (cart.length > 0) {
       cartDetails = cart.map(item => 

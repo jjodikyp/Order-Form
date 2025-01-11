@@ -51,6 +51,95 @@ const KABUPATEN_MALANG = {
   ],
 };
 
+// Definisikan struktur terbaru untuk semua kategori
+const LATEST_ITEMS_STRUCTURE = {
+  "PROMO 2 SEPATU": false,
+  Sepatu: false,
+  Sandal: false,
+  SandalSepatu: false,
+  Heels: false,
+  FlatShoes: false,
+  Tas: false,
+  Koper: false,
+  Helm: false,
+  Topi: false,
+  Stroller: false,
+};
+
+const LATEST_TREATMENTS_STRUCTURE = {
+  DeepClean: false,
+  OutsideClean: false,
+  UnYellowing: false,
+  Repaint: false,
+  Reglue: false,
+  Filler: false,
+};
+
+const LATEST_AROMAS_STRUCTURE = {
+  Apple: false,
+  Vanilla: false,
+  BubbleGum: false,
+  BlackCoffee: false,
+  Lavender: false,
+  Coklat: false,
+};
+
+const LATEST_ESTIMATIONS_STRUCTURE = {
+  "Normal (3-4 hari)": false,
+  "Next Day (1-2 hari)": false,
+  "Same Day (8 jam)": false,
+  "Estimasi Promo (4-5 hari)": false
+};
+
+// Fungsi helper untuk update struktur
+const updateStructure = (savedData, latestStructure, storageKey) => {
+  if (!savedData) {
+    return latestStructure;
+  }
+
+  const needsUpdate = Object.keys(latestStructure).some(key => !savedData.hasOwnProperty(key)) ||
+                     Object.keys(savedData).some(key => !latestStructure.hasOwnProperty(key));
+  
+  if (needsUpdate) {
+    const updatedData = {
+      ...latestStructure,
+      ...savedData
+    };
+    
+    Object.keys(updatedData).forEach(key => {
+      if (!latestStructure.hasOwnProperty(key)) {
+        delete updatedData[key];
+      }
+    });
+    
+    localStorage.setItem(storageKey, JSON.stringify(updatedData));
+    return updatedData;
+  }
+  
+  return savedData;
+};
+
+// Inisialisasi state dengan struktur terbaru
+const initialItems = (() => {
+  const savedItems = JSON.parse(localStorage.getItem("items"));
+  return updateStructure(savedItems, LATEST_ITEMS_STRUCTURE, "items");
+})();
+
+const initialTreatments = (() => {
+  const savedTreatments = JSON.parse(localStorage.getItem("treatments"));
+  return updateStructure(savedTreatments, LATEST_TREATMENTS_STRUCTURE, "treatments");
+})();
+
+const initialAromas = (() => {
+  const savedAromas = JSON.parse(localStorage.getItem("aromas"));
+  return updateStructure(savedAromas, LATEST_AROMAS_STRUCTURE, "aromas");
+})();
+
+const initialEstimations = (() => {
+  const savedEstimations = JSON.parse(localStorage.getItem("estimations"));
+  return updateStructure(savedEstimations, LATEST_ESTIMATIONS_STRUCTURE, "estimations");
+})();
+
 function App() {
   const navigate = useNavigate();
 
@@ -104,44 +193,12 @@ function App() {
   const [errors, setErrors] = useState({});
 
   // Load initial items state from localStorage
-  const initialItems = JSON.parse(localStorage.getItem("items")) || {
-    "PROMO 2 SEPATU": false,
-    Sepatu: false,
-    Sandal: false,
-    SandalSepatu: false,
-    Heels: false,
-    FlatShoes: false,
-    Tas: false,
-    Koper: false,
-    Helm: false,
-    Topi: false,
-    Stroller: false,
-  };
-
   const [items, setItems] = useState(initialItems);
 
   // Load initial treatments state from localStorage
-  const initialTreatments = JSON.parse(localStorage.getItem("treatments")) || {
-    DeepClean: false,
-    OutsideClean: false,
-    UnYellowing: false,
-    Repaint: false,
-    Reglue: false,
-    Filler: false,
-  };
-
   const [treatments, setTreatments] = useState(initialTreatments);
 
   // Load initial aromas state from localStorage
-  const initialAromas = JSON.parse(localStorage.getItem("aromas")) || {
-    Apple: false,
-    Vanilla: false,
-    BubbleGum: false,
-    BlackCoffee: false,
-    Lavender: false,
-    Coklat: false,
-  };
-
   const [aromas, setAromas] = useState(initialAromas);
 
   const [selectedArea, setSelectedArea] = useState(
@@ -163,12 +220,7 @@ function App() {
   const [showLocationConfirmPopup, setShowLocationConfirmPopup] = useState(false);
 
   // Tambahkan di bagian state awal
-  const [estimations, setEstimations] = useState({
-    "Normal (3-4 hari)": false,
-    "Next Day (1-2 hari)": false,
-    "Same Day (8 jam)": false,
-    "Estimasi Promo (4-5 hari)": false
-  });
+  const [estimations, setEstimations] = useState(initialEstimations);
 
   useEffect(() => {
     defineElement(lottie.loadAnimation);
@@ -569,27 +621,23 @@ function App() {
       return;
     }
 
-    // Update estimations untuk memungkinkan multiple selection
-    setEstimations(prev => {
-      const newEstimations = {
-        ...prev,
-        [estimationType]: !prev[estimationType]
+    // Update estimations untuk single selection
+    const updatedEstimations = Object.keys(LATEST_ESTIMATIONS_STRUCTURE).reduce((acc, key) => {
+      acc[key] = key === estimationType;
+      return acc;
+    }, {});
+    
+    setEstimations(updatedEstimations);
+    localStorage.setItem("estimations", JSON.stringify(updatedEstimations));
+
+    // Update formData
+    setFormData(prevForm => {
+      const newFormData = {
+        ...prevForm,
+        selectedEstimation: estimationType
       };
-
-      // Update formData
-      setFormData(prevForm => {
-        const selectedEstimations = Object.keys(newEstimations)
-          .filter(key => newEstimations[key]);
-        
-        const newFormData = {
-          ...prevForm,
-          selectedEstimation: selectedEstimations.join(", ")
-        };
-        localStorage.setItem("form", JSON.stringify(newFormData));
-        return newFormData;
-      });
-
-      return newEstimations;
+      localStorage.setItem("form", JSON.stringify(newFormData));
+      return newFormData;
     });
 
     if (errors.estimations) {
