@@ -1,12 +1,13 @@
 import React from "react";
 import { useRoutes } from "react-router-dom";
-import FirstPage from "./pages/orderPage/FirstPage";
-import LandingPage from "./pages/orderPage/LandingPage";
+import OrderForm from "./pages/OrderForm/index";
+import OrderSummary from "./pages/OrderForm/components/OrderSummary";
+
 
 function AppRoutes() {
   const routes = [
-    { path: '/', element: <LandingPage /> },
-    { path: '/first', element: <FirstPage /> }
+    { path: '/', element: <OrderForm /> },
+    { path: '/order-summary', element: <OrderSummary /> },
   ];
 
   const element = useRoutes(routes);

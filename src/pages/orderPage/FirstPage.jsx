@@ -82,6 +82,10 @@ function FirstPage() {
   const cartPopupRef = useRef(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    console.log("cart", cart);
+  }, [cart]);
+
   const variants = [
     {name: "Apple", isSoldOut: true},
     {name: "Vanilla", isSoldOut: true},

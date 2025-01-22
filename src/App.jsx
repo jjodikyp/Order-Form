@@ -4,15 +4,19 @@ import Routes from "./route";
 import { BrowserRouter } from "react-router-dom";
 import 'rsuite/dist/rsuite.min.css';
 import { Analytics } from "@vercel/analytics/react";
+import { OrderFormProvider } from "./pages/OrderForm/contexts/OrderFormContext";
+
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <>
-      <BrowserRouter>
-        <Routes />
-      </BrowserRouter>
+      <OrderFormProvider>
+        <BrowserRouter>
+          <Routes />
+        </BrowserRouter>
+      </OrderFormProvider>
       <Analytics />
     </>
   );
