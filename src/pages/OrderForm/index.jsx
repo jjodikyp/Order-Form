@@ -18,7 +18,7 @@ import PaketTambahan from "../../assets/images/tambahan.jpg";
 
 function App() {
     const { formik, modals, setModals } = useContext(OrderFormContext);
-    const { values, touched, errors, handleChange, setFieldValue, isSubmitting, handleSubmit, handleBlur } = formik;
+    const { values, touched, errors, handleChange, setFieldValue, isSubmitting, validateForm, handleBlur } = formik;
     const { showLocationConfirmPopup } = modals;
 
 
@@ -1022,7 +1022,44 @@ function App() {
 
     const renderButtonLanjutkan = () => {
 
-        const handleNextStep = () => {
+        const handleNextStep = async (e) => {
+            if (e) e.preventDefault();
+            // Validasi form terlebih dahulu
+            const errors = await formik.validateForm();
+            formik.setTouched({
+                name: true,
+                address: true,
+                selectedDistrict: true,
+                selectedArea: true,
+                pickupPoint: true,
+                itemCount: true,
+                selectedItems: true,
+                selectedTreatments: true,
+                selectedEstimation: true,
+                selectedAromas: true,
+                pickupDate: true,
+            });
+
+            // Cek jika ada error
+            if (Object.keys(errors).length > 0) {
+                // Tampilkan pesan error
+                const errorMessages = [];
+                if (errors.name) errorMessages.push("Nama harus diisi");
+                if (errors.address) errorMessages.push("Alamat harus diisi");
+                if (errors.selectedDistrict) errorMessages.push("Kecamatan harus dipilih");
+                if (errors.selectedArea) errorMessages.push("Area harus dipilih");
+                if (errors.pickupPoint) errorMessages.push("Patokan harus diisi");
+                if (errors.itemCount) errorMessages.push("Jumlah item harus diisi");
+                if (errors.selectedItems) errorMessages.push("Pilih minimal satu item");
+                if (errors.selectedTreatments) errorMessages.push("Pilih minimal satu treatment");
+                if (errors.selectedEstimation) errorMessages.push("Estimasi pengerjaan harus dipilih");
+                if (errors.selectedAromas) errorMessages.push("Pilih minimal satu aroma");
+                if (errors.pickupDate) errorMessages.push("Tanggal pickup harus dipilih");
+
+                alert("Mohon lengkapi form:\n" + errorMessages.join("\n"));
+                return;
+            }
+
             // Buat fungsi untuk menghapus duplikat dari array
             const removeDuplicates = (array) => {
                 if (!array) return [];
@@ -1035,7 +1072,7 @@ function App() {
                 selectedItems: removeDuplicates(values.selectedItems),
                 selectedTreatments: removeDuplicates(values.selectedTreatments),
                 selectedAromas: removeDuplicates(values.selectedAromas),
-                selectedEstimation: removeDuplicates(values.selectedEstimation) 
+                selectedEstimation: removeDuplicates(values.selectedEstimation)
             };
 
             // Log untuk debugging
@@ -1052,22 +1089,24 @@ function App() {
         };
 
         return (
-            <LazyMotion features={domAnimation}>
-                <m.button
-                    onClick={() => handleNextStep()}
-                    className="daftar"
-                    style={{
-                        backgroundColor: "#3787F7",
-                        opacity: isSubmitting ? 0.7 : 1,
-                        cursor: isSubmitting ? 'not-allowed' : 'pointer'
-                    }}
-                    transition={{ stiffness: 1000, damping: 5 }}
-                    whileTap={{ scale: 0.9 }}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? 'Memproses...' : 'Lanjutkan'}
-                </m.button>
-            </LazyMotion>
+            <>
+                <LazyMotion features={domAnimation}>
+                    <m.button
+                        onClick={handleNextStep}
+                        className="daftar"
+                        style={{
+                            backgroundColor: "#3787F7",
+                            opacity: isSubmitting ? 0.7 : 1,
+                            cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                        }}
+                        transition={{ stiffness: 1000, damping: 5 }}
+                        whileTap={{ scale: 0.9 }}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Memproses...' : 'Lanjutkan'}
+                    </m.button>
+                </LazyMotion>
+            </>
         );
     };
 

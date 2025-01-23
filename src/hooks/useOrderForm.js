@@ -24,9 +24,6 @@ const validationSchema = Yup.object().shape({
     pickupDate: Yup.date()
         .nullable()
         .required('Tanggal pick-up harus dipilih!'),
-    pickupTime: Yup.string()
-        .nullable()
-        .required('Jam pick-up harus dipilih!'),
     specialMessage: Yup.string(),
     locationLink: Yup.string(),
     selectedArea: Yup.string()
