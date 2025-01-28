@@ -12,7 +12,7 @@ const ModalPaket = () => {
     const paketVariants = [
         { name: "Suede Care", price: 20000 },
         { name: "Penghilang Bau", price: 15000 },
-        { name: "Tambahan Pengharum", price: 5000 },
+        { name: "Tambahan Pengharum", price: 15000 },
         { name: "Penghilang Noda", price: 15000 },
         { name: "Leather Care", price: 20000 },
         { name: "Penghilang Jamur", price: 15000 }

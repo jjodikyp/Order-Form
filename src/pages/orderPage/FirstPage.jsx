@@ -7,6 +7,8 @@ import Parfum from "../../assets/images/parfum.png";
 import { Link, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { FaShoppingCart } from 'react-icons/fa';
+import ModalInsole from './components/ModalInsole';
+import insoleImage from '../../assets/insole-dummy.png'; // Sesuaikan path
 
 const FREE_DELIVERY_THRESHOLD = 7.0;
 const BASE_DISTANCE = 8.0;
@@ -81,6 +83,13 @@ function FirstPage() {
   const [showCartPopup, setShowCartPopup] = useState(false);
   const cartPopupRef = useRef(null);
   const navigate = useNavigate();
+
+  const [modals, setModals] = useState({
+    parfum: false,
+    tali: false,
+    paket: false,
+    insole: false
+  });
 
   useEffect(() => {
     console.log("cart", cart);
@@ -260,12 +269,19 @@ function FirstPage() {
       // Ambil data cart dari localStorage jika ada
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-      // Format cart details
+      // Format cart details dengan insole
       let cartDetails = "Saya tidak membeli produk tambahan";
       if (cart.length > 0) {
-        cartDetails = cart.map(item => 
-          `${item.quantity}x ${item.type === 'parfum' ? 'Parfum' : item.type === 'tali' ? 'Tali Sepatu' : 'Paket Tambahan'} ${item.variant} (Rp${item.price * item.quantity})`
-        ).join("\n");
+        cartDetails = cart.map(item => {
+          if (item.type === 'insole') {
+            return `1x Insole - ${item.thickness} (Panjang: ${item.length}cm, Ukuran: ${item.shoeSize}) - Rp${item.price.toLocaleString()}`;
+          }
+          return `${item.quantity}x ${
+            item.type === 'parfum' ? 'Parfum' : 
+            item.type === 'tali' ? 'Tali Sepatu' : 
+            'Paket Tambahan'
+          } ${item.variant} (Rp${item.price * item.quantity})`;
+        }).join("\n");
         cartDetails += `\n*Total:* Rp${calculateTotal()}`;
       }
 
@@ -489,6 +505,54 @@ ${formData?.specialMessage ? `*Pesan Khusus:* ${formData?.specialMessage}\n` : "
               <LazyMotion features={domAnimation}>
                 <m.button
                   onClick={handlePaketPesanClick}
+                  className="order-button"
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ stiffness: 1000, damping: 5 }}
+                  style={{
+                    backgroundColor: "#3787F7",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "10px",
+                    padding: "8px",
+                    cursor: "pointer",
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: "14px",
+                  }}
+                >
+                  Lihat
+                </m.button>
+              </LazyMotion>
+            </div>
+          </div>
+
+          {/* Insole Product */}
+          <div className="katalog" style={{ marginTop: "0px", position: "relative" }}>
+            <div className="product-image" style={{ marginRight: "10px" }}>
+              <img 
+                src={insoleImage} 
+                alt="Insole Sepatu" 
+                loading="lazy"
+                width="80"
+                height="80"
+                style={{ borderRadius: "10px" }} 
+              />
+            </div>
+            <div className="product-info" style={{ flexGrow: 1 }}>
+              <div className="product-name" style={{
+                fontWeight: "bold",
+                color: "black",
+                fontFamily: "Montserrat, sans-serif",
+              }}>
+                Insole Sepatu
+              </div>
+              <div className="product-description" style={{ color: "black", fontFamily: "Montserrat, sans-serif" }}>
+                Start Rp45.000
+              </div>
+            </div>
+            <div className="order-button" style={{ position: "relative" }}>
+              <LazyMotion features={domAnimation}>
+                <m.button
+                  onClick={() => setModals({ ...modals, insole: true })}
                   className="order-button"
                   whileTap={{ scale: 0.9 }}
                   transition={{ stiffness: 1000, damping: 5 }}
@@ -1439,6 +1503,17 @@ ${formData?.specialMessage ? `*Pesan Khusus:* ${formData?.specialMessage}\n` : "
               </div>
             </>
           )}
+
+          <div className="mb-4">
+            <button
+              onClick={() => setModals({ ...modals, insole: true })}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Lihat Katalog Insole
+            </button>
+          </div>
+
+          <ModalInsole />
         </div>
       </div>
     </div>

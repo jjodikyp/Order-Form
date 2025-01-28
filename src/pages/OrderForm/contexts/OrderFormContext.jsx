@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react';
 import { useOrderForm } from '../../../hooks/useOrderForm';
+import { useState } from 'react';
 
 const OrderFormContext = createContext(null);
 
@@ -11,10 +12,17 @@ const OrderFormProvider = ({ children }) => {
     initialValues,
   } = useOrderForm();
 
+  const [modalsState, setModalsState] = useState({
+    parfum: false,
+    tali: false,
+    paket: false,
+    insole: false
+  });
+
   const values = {
     formik,
-    modals,
-    setModals,
+    modals: modalsState,
+    setModals: setModalsState,
     initialValues,
   }
 

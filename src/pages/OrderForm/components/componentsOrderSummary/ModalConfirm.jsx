@@ -63,6 +63,8 @@ ${values.specialMessage ? `*Pesan Khusus:* ${values.specialMessage}\n` : ""}${va
                     return 'Parfum';
                 case 'shoelace':
                     return 'Tali Sepatu';
+                case 'insole':
+                    return `Insole Sepatu - ${item.thickness}`;
                 case 'paket':
                     return item.name;
                 default:
@@ -77,6 +79,8 @@ ${values.specialMessage ? `*Pesan Khusus:* ${values.specialMessage}\n` : ""}${va
                         return 'Custom';
                     case 'tali':
                         return 'Reguler';
+                    case 'insole':
+                        return `(Panjang: ${item.length}cm, Ukuran: ${item.shoeSize})`;
                     case 'paket':
                         return item.name || '';
                     default:
@@ -86,7 +90,6 @@ ${values.specialMessage ? `*Pesan Khusus:* ${values.specialMessage}\n` : ""}${va
             return item.variant;
         };
 
-        // Tambahkan indentasi dan handling untuk undefined values
         const details = cart.map(item => {
             const productType = getProductType(item);
             const variant = getProductVariant(item);
@@ -96,7 +99,6 @@ ${values.specialMessage ? `*Pesan Khusus:* ${values.specialMessage}\n` : ""}${va
             return `  ${quantity}x ${productType} ${variant} (Rp${(price * quantity).toLocaleString('id-ID')})`;
         }).join("\n");
 
-        // Hitung total dengan safe check untuk price
         const total = cart.reduce((total, item) => total + ((item.price || 0) * (item.quantity || 1)), 0);
 
         return `${details}\n\n*Total:* Rp${total.toLocaleString('id-ID')}`;
@@ -219,7 +221,7 @@ ${values.specialMessage ? `*Pesan Khusus:* ${values.specialMessage}\n` : ""}${va
                                 <div style={{ fontSize: "14px", color: "black" }}>
                                     {values.cart.map((item, index) => (
                                         <p key={index}>
-                                            {item.quantity}x {item.type === 'parfum' ? 'Parfum' : item.type === 'shoelace' ? 'Tali Sepatu' : item.name} {item.variant} ({formatCurrency(item.price * item.quantity)})
+                                            {item.quantity}x {item.type === 'parfum' ? 'Parfum' : item.type === 'shoelace' ? 'Tali Sepatu' : item.type === 'insole' ? 'Insole Sepatu' : item.name} {item.variant} ({formatCurrency(item.price * item.quantity)})
                                         </p>
                                     ))}
                                     <p style={{ marginTop: "10px", fontWeight: "bold" }}>Total: {formatCurrency(calculateTotal())}</p>

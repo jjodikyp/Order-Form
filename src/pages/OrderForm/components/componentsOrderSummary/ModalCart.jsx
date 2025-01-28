@@ -32,6 +32,41 @@ const ModalCart = () => {
         return values.cart.reduce((total, item) => total + item.price * item.quantity, 0);
     }
 
+    const renderCartItemDetails = (item) => {
+        if (item.type === 'insole') {
+            return (
+                <div style={{ flex: 1 }}>
+                    <p style={{ fontWeight: "bold", color: "black" }}>
+                        Insole Sepatu
+                    </p>
+                    <p style={{ color: "#666", fontSize: "14px" }}>
+                        Ketebalan: {item.thickness}
+                        <br />
+                        Panjang: {item.length} CM
+                        <br />
+                        Ukuran Sepatu: {item.shoeSize}
+                        <br />
+                        {formatCurrency(item.price)} x {item.quantity} = {formatCurrency(item.price * item.quantity)}
+                    </p>
+                </div>
+            );
+        }
+
+        // Existing item types
+        return (
+            <div style={{ flex: 1 }}>
+                <p style={{ fontWeight: "bold", color: "black" }}>
+                    {item.type === 'parfum' ? 'Parfum' : 
+                     item.type === 'shoelace' ? 'Tali Sepatu' : 
+                     item.name} {item.variant}
+                </p>
+                <p style={{ color: "#666", fontSize: "14px" }}>
+                    {formatCurrency(item.price)} x {item.quantity} = {formatCurrency(item.price * item.quantity)}
+                </p>
+            </div>
+        );
+    };
+
     return (
         <div>
             {modals.cart && (
@@ -94,17 +129,10 @@ const ModalCart = () => {
                                     <div style={{
                                         display: "flex",
                                         justifyContent: "space-between",
-                                        alignItems: "center",
+                                        alignItems: "flex-start",
                                         marginBottom: "10px"
                                     }}>
-                                        <div style={{ flex: 1 }}>
-                                            <p style={{ fontWeight: "bold", color: "black" }}>
-                                                {item.type === 'parfum' ? 'Parfum' : item.type === 'shoelace' ? 'Tali Sepatu' : item.name} {item.variant}
-                                            </p>
-                                            <p style={{ color: "#666", fontSize: "14px" }}>
-                                                {formatCurrency(item.price)} x {item.quantity} = {formatCurrency(item.price * item.quantity)}
-                                            </p>
-                                        </div>
+                                        {renderCartItemDetails(item)}
                                         <LazyMotion features={domAnimation}>
                                             <m.button
                                                 onClick={() => handleRemoveFromCart(index)}
@@ -123,54 +151,58 @@ const ModalCart = () => {
                                             </m.button>
                                         </LazyMotion>
                                     </div>
-                                    <div style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "10px",
-                                        justifyContent: "center"
-                                    }}>
-                                        <LazyMotion features={domAnimation}>
-                                            <m.button
-                                                onClick={() => handleUpdateQuantity(index, item.quantity - 1)}
-                                                whileTap={{ scale: 0.95 }}
-                                                style={{
-                                                    backgroundColor: "#3787F7",
-                                                    color: "white",
-                                                    border: "none",
-                                                    borderRadius: "100%",
-                                                    width: "30px",
-                                                    height: "30px",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    cursor: "pointer"
-                                                }}
-                                            >
-                                                -
-                                            </m.button>
-                                        </LazyMotion>
-                                        <span style={{ margin: "0 10px", fontWeight: "bold" }}>{item.quantity}</span>
-                                        <LazyMotion features={domAnimation}>
-                                            <m.button
-                                                onClick={() => handleUpdateQuantity(index, item.quantity + 1)}
-                                                whileTap={{ scale: 0.95 }}
-                                                style={{
-                                                    backgroundColor: "#3787F7",
-                                                    color: "white",
-                                                    border: "none",
-                                                    borderRadius: "100%",
-                                                    width: "30px",
-                                                    height: "30px",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    cursor: "pointer"
-                                                }}
-                                            >
-                                                +
-                                            </m.button>
-                                        </LazyMotion>
-                                    </div>
+                                    
+                                    {/* Quantity controls - only show for non-insole items */}
+                                    {item.type !== 'insole' && (
+                                        <div style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "10px",
+                                            justifyContent: "center"
+                                        }}>
+                                            <LazyMotion features={domAnimation}>
+                                                <m.button
+                                                    onClick={() => handleUpdateQuantity(index, item.quantity - 1)}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    style={{
+                                                        backgroundColor: "#3787F7",
+                                                        color: "white",
+                                                        border: "none",
+                                                        borderRadius: "100%",
+                                                        width: "30px",
+                                                        height: "30px",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        cursor: "pointer"
+                                                    }}
+                                                >
+                                                    -
+                                                </m.button>
+                                            </LazyMotion>
+                                            <span style={{ margin: "0 10px", fontWeight: "bold" }}>{item.quantity}</span>
+                                            <LazyMotion features={domAnimation}>
+                                                <m.button
+                                                    onClick={() => handleUpdateQuantity(index, item.quantity + 1)}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    style={{
+                                                        backgroundColor: "#3787F7",
+                                                        color: "white",
+                                                        border: "none",
+                                                        borderRadius: "100%",
+                                                        width: "30px",
+                                                        height: "30px",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        cursor: "pointer"
+                                                    }}
+                                                >
+                                                    +
+                                                </m.button>
+                                            </LazyMotion>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>

@@ -4,6 +4,7 @@ import { LazyMotion, m, domAnimation } from "framer-motion";
 import TaliSepatu from "../../../assets/images/talisepatu.png";
 import PaketTambahan from "../../../assets/images/tambahan.jpg";
 import Parfum from "../../../assets/images/parfum.png";
+import insoleImage from "../../../assets/images/insole.png";
 import { Link } from "react-router-dom";
 import ModalParfum from "./componentsOrderSummary/ModalParfum";
 import { OrderFormContext } from "../contexts/OrderFormContext";
@@ -11,6 +12,7 @@ import ModalShoelace from "./componentsOrderSummary/ModalShoelace";
 import ModalPaket from "./componentsOrderSummary/ModalPaket";
 import ModalCart from "./componentsOrderSummary/ModalCart";
 import ModalConfirm from "./componentsOrderSummary/ModalConfirm";
+import ModalInsole from "./componentsOrderSummary/ModalInsole";
 
 
 function OrderSummary() {
@@ -213,6 +215,64 @@ function OrderSummary() {
     )
   }
 
+  const renderInsoleProduct = () => {
+    return (
+      <div>
+        {modals.insole && (
+          <ModalInsole />
+        )}
+        {/* Insole Product */}
+        <div className="katalog" style={{ marginTop: "0px", position: "relative" }}>
+          <div className="product-image" style={{ marginRight: "10px" }}>
+            <img
+              src={insoleImage}
+              alt="Insole Sepatu"
+              loading="lazy"
+              width="80"
+              height="80"
+              style={{ borderRadius: "10px" }}
+            />
+          </div>
+          <div className="product-info" style={{ flexGrow: 1 }}>
+            <div className="product-name" style={{
+              fontWeight: "bold",
+              color: "black",
+              fontFamily: "Montserrat, sans-serif",
+            }}>
+              Insole Sepatu
+            </div>
+            <div className="product-description" style={{ color: "black", fontFamily: "Montserrat, sans-serif" }}>
+              Start Rp45.000
+            </div>
+          </div>
+          <div className="order-button" style={{ position: "relative" }}>
+            <LazyMotion features={domAnimation}>
+              <m.button
+                onClick={() => setModals({ ...modals, insole: true })}
+                className="order-button"
+                whileTap={{ scale: 0.9 }}
+                transition={{ stiffness: 1000, damping: 5 }}
+                style={{
+                  backgroundColor: "#3787F7",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "10px",
+                  padding: "8px",
+                  cursor: "pointer",
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "14px",
+                }}
+              >
+                Lihat
+              </m.button>
+            </LazyMotion>
+          </div>
+        </div>
+
+      </div>
+    )
+  }
+
   const renderButtonConfirm = () => {
     const handleOpenConfirmOrder = () => {
       setModals({ ...modals, confirmation: true });
@@ -286,6 +346,7 @@ function OrderSummary() {
           {renderPaketProduct()}
           {renderParfumProduct()}
           {renderShoelaceProduct()}
+          {renderInsoleProduct()}
           <ModalCart />
           {renderButtonConfirm()}
 
