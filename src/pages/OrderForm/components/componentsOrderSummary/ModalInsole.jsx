@@ -32,16 +32,30 @@ const ModalInsole = () => {
         thickness: value,
         price: selectedVariant?.price || 0,
       }));
-    } else {
-      setInsoleData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    } else if (name === "length") {
+      const formattedValue = value.replace(',', '.');
+      if (formattedValue === '' || (!isNaN(formattedValue) && parseFloat(formattedValue) > 0)) {
+        setInsoleData((prev) => ({
+          ...prev,
+          [name]: formattedValue
+        }));
+      }
+    } else if (name === "shoeSize") {
+      const formattedValue = value.replace(',', '.');
+      if (formattedValue === '' || !isNaN(formattedValue)) {
+        setInsoleData((prev) => ({
+          ...prev,
+          [name]: formattedValue
+        }));
+      }
     }
   };
 
   const handleAddInsoleToCart = () => {
-    if (!insoleData.thickness || !insoleData.length || !insoleData.shoeSize) {
+    const length = parseFloat(insoleData.length.replace(',', '.'));
+    const shoeSize = parseFloat(insoleData.shoeSize.replace(',', '.'));
+
+    if (!insoleData.thickness || !length || !shoeSize) {
       alert("Silakan lengkapi semua data insole");
       return;
     }
@@ -49,8 +63,8 @@ const ModalInsole = () => {
     const newItem = {
       type: "insole",
       thickness: insoleData.thickness,
-      length: insoleData.length,
-      shoeSize: insoleData.shoeSize,
+      length: insoleData.length.replace(',', '.'),
+      shoeSize: insoleData.shoeSize.replace(',', '.'),
       price: insoleData.price,
       quantity: 1,
     };
@@ -161,7 +175,7 @@ const ModalInsole = () => {
                   Panjang Insole (CM):
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   value={insoleData.length}
                   onChange={(e) => handleInsoleChange("length", e.target.value)}
                   style={{
@@ -173,7 +187,7 @@ const ModalInsole = () => {
                     backgroundColor: "white",
                     color: "black",
                   }}
-                  placeholder="Masukkan panjang dalam CM"
+                  placeholder="Contoh: 25.5 atau 25,5"
                 />
               </div>
 
@@ -190,9 +204,7 @@ const ModalInsole = () => {
                 <input
                   type="text"
                   value={insoleData.shoeSize}
-                  onChange={(e) =>
-                    handleInsoleChange("shoeSize", e.target.value)
-                  }
+                  onChange={(e) => handleInsoleChange("shoeSize", e.target.value)}
                   style={{
                     width: "100%",
                     padding: "8px",
@@ -202,7 +214,7 @@ const ModalInsole = () => {
                     backgroundColor: "white",
                     color: "black",
                   }}
-                  placeholder="Contoh: 42, 43, etc"
+                  placeholder="Contoh: 42.5 atau 42,5"
                 />
               </div>
 
