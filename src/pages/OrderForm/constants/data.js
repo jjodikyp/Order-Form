@@ -56,12 +56,12 @@ const LATEST_ITEMS_STRUCTURE = {
 };
 
 const LATEST_TREATMENTS_STRUCTURE = {
-    DeepClean: false,
-    OutsideClean: false,
-    UnYellowing: false,
-    Repaint: false,
-    Reglue: false,
-    Filler: false,
+    "DeepClean Normal (3 Hari)": false,
+    "OutsideClean Normal (3 Hari)": false,
+    "UnYellowing (Hanya Midsole)": false,
+    "Repaint (Pewarnaan Sepatu)": false,
+    "Reglue/Ganti Sol/Tambah Karet": false,
+    "Filler (Kulit Retak)": false,
 };
 
 const LATEST_AROMAS_STRUCTURE = {
