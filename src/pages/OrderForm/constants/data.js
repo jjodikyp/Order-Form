@@ -56,8 +56,8 @@ const LATEST_ITEMS_STRUCTURE = {
 };
 
 const LATEST_TREATMENTS_STRUCTURE = {
-    "DeepClean Normal (3 Hari)": false,
-    "OutsideClean Normal (3 Hari)": false,
+    "DeepClean Normal": false,
+    "OutsideClean Normal": false,
     "UnYellowing (Hanya Midsole)": false,
     "Repaint (Pewarnaan Sepatu)": false,
     "Reglue/Ganti Sol/Tambah Karet": false,
@@ -77,6 +77,7 @@ const LATEST_ESTIMATIONS_STRUCTURE = {
     "Normal (3 hari)": false,
     "Next Day (1-2 hari)": false,
     "Same Day (8 jam)": false,
+    "Estimasi REGLUE (1-2 Minggu)": false,
     "Estimasi Promo (5 hari)": false,
 };
 
