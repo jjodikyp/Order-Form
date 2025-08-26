@@ -1316,7 +1316,7 @@ function App() {
             paddingLeft: "20px",
           }}
         >
-          Jam Pick-Up hanya berlaku mulai jam 09.00 sampai 19.00!
+          Jam Pick-Up hanya berlaku mulai jam 13.00 sampai 19.00!
         </div>
 
         {/* Input Jam Pick-Up */}
@@ -1533,7 +1533,7 @@ function App() {
                 lineHeight: "1.5",
               }}
             >
-              Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 09.00 sampai
+              Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 13.00 sampai
               17.00. Silahkan pindah ke hari selanjutnya apabila sudah melewati
               batas jam PickUp. Terima Kasih
             </p>
@@ -1594,7 +1594,7 @@ function App() {
                 lineHeight: "1.5",
               }}
             >
-              Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 09.00 sampai
+              Sesuai ketentuan, jam PickUp hanya berlaku mulai jam 13.00 sampai
               17.00. Silahkan pindah ke hari selanjutnya apabila sudah melewati
               batas jam PickUp. Terima Kasih
             </p>

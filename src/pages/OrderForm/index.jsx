@@ -779,7 +779,7 @@ function App() {
             if (hour >= 9 && hour < 19) {
                 setFieldValue('pickupTime', selectedTime);
             } else {
-                alert('Jam Pick-Up hanya berlaku mulai jam 09.00 sampai 19.00!');
+                alert('Jam Pick-Up hanya berlaku mulai jam 13.00 sampai 19.00!');
             }
         };
 
@@ -878,7 +878,7 @@ function App() {
                         paddingLeft: "20px",
                     }}
                 >
-                    Jam Pick-Up hanya berlaku mulai jam 09.00 sampai 19.00!
+                    Jam Pick-Up hanya berlaku mulai jam 13.00 sampai 19.00!
                 </div>
 
                 {/* Input Jam Pick-Up */}
